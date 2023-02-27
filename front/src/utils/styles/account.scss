@@ -1,0 +1,63 @@
+@import './variables';
+
+.account {
+  &__main {
+    display: flex;
+    width: 100%;
+    &__nav {
+      border: 1px solid red;
+      width: 20%;
+      height: 80vh;
+      & > * {
+        list-style: none;
+        cursor: pointer;
+      }
+    }
+    &__content {
+      border: 1px solid red;
+      width: 80%;
+      height: 80vh;
+    }
+  }
+  &__logout {
+    &__logoutBtn {
+      width: 100px;
+      height: 50px;
+    }
+    &__layout {
+      z-index: 9;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(black, 0.8);
+    }
+    &__confirmBox {
+      z-index: 10;
+      position: absolute;
+      top: 50vh;
+      left: 50vw;
+      transform: translate(-50%, -50%);
+      padding: 2%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-evenly;
+      background: $primary-color;
+      box-shadow: black 0px 0px 20px;
+      width: 300px;
+      aspect-ratio: 1.5 / 1;
+      text-align: center;
+      &__title {
+        font-size: 1.5em;
+        color: white;
+      }
+      &__btn {
+        display: flex;
+        justify-content: space-evenly;
+        width: 50%;
+      }
+    }
+  }
+}
