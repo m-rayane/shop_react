@@ -6,21 +6,21 @@ export default function ConfirmBox({
   confirmName,
   className,
   handleCancel,
-  handleCconfirm,
+  handleConfirm,
 }) {
   return (
-    <div className={className + '__confirmBox'}>
-      <div className={className + '__confirmBox__title'}>{message}</div>
-      <div className={className + '__confirmBox__btn'}>
+    <div className={className}>
+      <div className={className + '__title'}>{message}</div>
+      <div className={className + '__btn'}>
         <Button
-          className={className + '__confirmBox__btn__cancel'}
+          className={className + '__btn__cancel'}
           onClick={handleCancel}
           name={cancelName}
           children="Annuler"
         />
         <Button
-          className={className + '__confirmBox__btn__confirm'}
-          onClick={handleCconfirm}
+          className={className + '__btn__confirm'}
+          onClick={handleConfirm}
           name={confirmName}
           children="Confirmer"
         />

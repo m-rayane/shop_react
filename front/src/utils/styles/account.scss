@@ -1,6 +1,13 @@
 @import './variables';
+@import './mixins';
 
 .account {
+  width: 100%;
+  padding: 1%;
+  margin-top: 100px;
+  & > h2 {
+    text-align: center;
+  }
   &__main {
     display: flex;
     width: 100%;
@@ -33,31 +40,6 @@
       height: 100vh;
       background-color: rgba(black, 0.8);
     }
-    &__confirmBox {
-      z-index: 10;
-      position: absolute;
-      top: 50vh;
-      left: 50vw;
-      transform: translate(-50%, -50%);
-      padding: 2%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-evenly;
-      background: $primary-color;
-      box-shadow: black 0px 0px 20px;
-      width: 300px;
-      aspect-ratio: 1.5 / 1;
-      text-align: center;
-      &__title {
-        font-size: 1.5em;
-        color: white;
-      }
-      &__btn {
-        display: flex;
-        justify-content: space-evenly;
-        width: 50%;
-      }
-    }
+    @include confirmBox;
   }
 }

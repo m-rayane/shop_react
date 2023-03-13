@@ -1,11 +1,38 @@
 @import './variables';
 
 .home {
-  & > section {
-    width: 100vw;
-    height: 100vh;
-  }
+  display: flex;
+  flex-direction: column;
+  transition: all 0.5s ease-in-out;
   &__section {
+    position: relative;
+    width: 100vw;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    & > h1 {
+      position: absolute;
+      top: 25%;
+      z-index: 2;
+      text-shadow: 0 0 15px white;
+      font-size: 4em;
+    }
+    &__button {
+      z-index: 2;
+      position: absolute;
+      padding: 10px 30px;
+      bottom: 3vh;
+      font-size: 1em;
+      font-weight: 700;
+      background: $primary-color;
+      transition: all 0.3s ease-in-out;
+      &:hover {
+        filter: brightness(1.2);
+        box-shadow: 0 0 20px $primary-color;
+      }
+    }
     &__carousel {
       overflow: hidden;
       transition: all 1s ease-in-out;
@@ -51,32 +78,65 @@
         height: 25px;
       }
     }
+    &__products {
+      display: flex;
+      flex-wrap: nowrap;
+      justify-content: space-between;
+      width: 100%;
+      height: 100%;
+      margin: 5vh 0;
+      &__miniCard {
+        list-style: none;
+        &__title {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          position: absolute;
+          top: 0;
+          padding-bottom: 5px;
+          background-color: rgba($tertiary-color, 0.3);
+          transition: all 0.3s ease-in-out;
+          & > h3 {
+            text-align: center;
+            color: white;
+            transition: all 0.5s ease-in-out;
+            font-size: 2em;
+          }
+        }
+        & > a {
+          display: block;
+          width: 24.8vw;
+          height: 24.8vw;
+          & > div {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            &:hover img {
+              transform: scale(1.25);
+            }
+            &:hover h3 {
+              transform: scale(10);
+            }
+            &:hover .miniCardTitle {
+              opacity: 0;
+            }
+            & > * {
+              width: 100%;
+              height: 100%;
+            }
+            position: relative;
 
-    &--2 {
-      background: url(../images/main-2.jpg);
-      background-size: cover;
-      &__text {
-        position: relative;
-        width: 60%;
-        top: 10%;
-        left: 2%;
-        font-size: 2.5em;
-        font-weight: bold;
-        text-align: center;
-      }
-    }
-    &--3 {
-      background: url(../images/main-3.jpg);
-      background-size: cover;
-      &__text {
-        position: relative;
-        width: 80%;
-        top: 10%;
-        left: 10%;
-        font-size: 3em;
-        font-weight: bold;
-        text-align: center;
+            & img {
+              object-fit: cover;
+              transition: all 0.5s ease-in-out;
+            }
+          }
+        }
       }
     }
   }
+}
+
+h1 {
+  font-size: 2rem;
 }

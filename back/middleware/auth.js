@@ -13,11 +13,12 @@ module.exports = (req, res, next) => {
       userId: userId,
       role: admin,
     }
-    console.log(req.auth)
     console.log('auth ok')
     next()
   } catch (error) {
     console.log('auth error')
+    res.clearCookie('jwt')
+    console.log('You are deconnected')
     res.status(403).json({ error })
   }
 }

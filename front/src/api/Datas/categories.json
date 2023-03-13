@@ -1,0 +1,67 @@
+
+  {
+    "shipping":[
+      {
+      "category": "shippingFirstName",
+      "name": "Prénom",
+      "message": "Le prénom",
+      "key": "firstName"
+    },
+    {
+      "category": "shippingLastName",
+      "name": "Nom",
+      "message": "Le nom",
+      "key": "lastName"
+    },
+    {
+      "category": "shippingPhoneNumber",
+      "name": "Numéro de téléphone",
+      "message": "Le numéro de téléphone",
+      "key": "phoneNumber"
+    },
+    {
+      "category": "shippingAddress",
+      "name": "Adresse",
+      "message": "L'adresse",
+      "key": "address"
+    },
+    {
+      "category": "shippingZipCode",
+      "name": "Code postale",
+      "message": "Le code postale",
+      "key": "zipCode"
+    },
+    {
+      "category": "shippingCity",
+      "name": "Ville",
+      "message": "La ville",
+      "key": "city"
+    }
+    ],
+        "billing":[
+    {
+      "category": "shippingPhoneNumber",
+      "name": "Numéro de téléphone",
+      "message": "Le numéro de téléphone",
+      "key": "phoneNumber"
+    },
+    {
+      "category": "shippingAddress",
+      "name": "Adresse",
+      "message": "L'adresse",
+      "key": "address"
+    },
+    {
+      "category": "shippingZipCode",
+      "name": "Code postale",
+      "message": "Le code postale",
+      "key": "zipCode"
+    },
+    {
+      "category": "shippingCity",
+      "name": "Ville",
+      "message": "La ville",
+      "key": "city"
+    }
+    ]
+  }

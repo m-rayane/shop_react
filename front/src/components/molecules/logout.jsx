@@ -1,12 +1,14 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import ConfirmBox from './confirmBox'
 import { Button } from '../atoms/form/button'
 import UserService from '../../api/Services/UserServices'
+import { Context } from '../../utils/Context'
 const userServices = new UserService()
 
 export default function Logout({ className, name, origin }) {
+  const { getUser } = useContext(Context)
   const navigate = useNavigate()
   const [confirmLogout, setConfirmLogout] = useState(false)
 
@@ -18,11 +20,15 @@ export default function Logout({ className, name, origin }) {
 
   const handleConfirm = async (e) => {
     e.preventDefault()
-    localStorage.clear()
-    setConfirmLogout('')
-    navigate('/', { replace: true })
-    window.location.reload()
-    await userServices.logoutUser()
+    try {
+      localStorage.removeItem('userId')
+      localStorage.removeItem('expirationDate')
+      setConfirmLogout('')
+      window.location.reload()
+      await userServices.logoutUser()
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return (
@@ -39,9 +45,9 @@ export default function Logout({ className, name, origin }) {
           <ConfirmBox
             message="Êtes-vous sûr de vouloir vous déconnecter ?"
             name={name}
-            className={className}
+            className={className + '__confirmBox'}
             handleCancel={handleCancel}
-            handleCconfirm={handleConfirm}
+            handleConfirm={handleConfirm}
           />
         </>
       )}

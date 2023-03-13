@@ -1,32 +1,33 @@
-import { FormField } from '../atoms/form/formField'
+import { useContext, useEffect } from 'react'
 
-export const AddressForm = ({ className, handleChange }) => {
+import { FormField } from '../atoms/form/formField'
+import { Context } from '../../utils/Context'
+
+export const AddressForm = ({
+  categories,
+  className,
+  handleChange,
+  handleBlur,
+}) => {
+  const { setTargetCategory, targetCategory } = useContext(Context)
   return (
-    <div className={className + '__fields'}>
-      <FormField
-        name="address"
-        className={className + '__fields__field'}
-        type="text"
-        onChange={handleChange}
-      >
-        Numéro et nom de rue
-      </FormField>
-      <FormField
-        name="zipCode"
-        className={className + '__fields__field'}
-        type="text"
-        onChange={handleChange}
-      >
-        Code postal
-      </FormField>
-      <FormField
-        name="city"
-        className={className + '__fields__field'}
-        type="text"
-        onChange={handleChange}
-      >
-        Ville
-      </FormField>
+    <div className={`${className}__fields`}>
+      {categories &&
+        categories.map((item, index) => {
+          const isPhoneNumber = item.category.includes('phone')
+          return (
+            <FormField
+              name={item.category}
+              className={`${className}__fields__${item.category}`}
+              type={isPhoneNumber ? 'phone' : 'text'}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              onFocus={() => setTargetCategory(item)}
+            >
+              {item.name}
+            </FormField>
+          )
+        })}
     </div>
   )
 }

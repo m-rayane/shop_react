@@ -16,7 +16,7 @@ CREATE TABLE `users` (
   `phoneNumber` INT(10),
   `address` VARCHAR(255),
   `zipCode` INT(5),
-  `country` VARCHAR(50)
+  `city` VARCHAR(50)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -30,12 +30,29 @@ CREATE TABLE `products` (
   `createdDate` DATETIME DEFAULT CURRENT_TIMESTAMP,
   `name` VARCHAR(255) NOT NULL,
   `description` TEXT NOT NULL,
+  `technical` TEXT NOT NULL,
   `price` FLOAT(10) NOT NULL,
   `weight` INT(10) NOT NULL,
   `brand` VARCHAR(50) NOT NULL,
   `model` VARCHAR(50) NOT NULL,
   `category` VARCHAR(50) NOT NULL,
+  `stock` INT(10),
   `image` VARCHAR(255)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- --------------------------------------------------------
+--
+-- Table `product_options`
+--
+
+CREATE TABLE `product_options` (
+  `id` INT(10) PRIMARY KEY AUTO_INCREMENT,
+  `productId` VARCHAR(50) NOT NULL,
+  `name` VARCHAR(255) NOT NULL,
+  `description` TEXT,
+  `price` FLOAT(10) NOT NULL
+
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -44,7 +61,7 @@ CREATE TABLE `products` (
 -- Table `productImages`
 --
 
-CREATE TABLE `productImages` (
+CREATE TABLE `product_images` (
   `id` INT(10) PRIMARY KEY,
   `productId` INT(10) NOT NULL,
   `url` VARCHAR(255) NOT NULL,
@@ -57,13 +74,14 @@ CREATE TABLE `productImages` (
 --
 
 CREATE TABLE `orders` (
-  `id` INT(10) PRIMARY KEY,
-  `userId` INT(10) NOT NULL,
-  `statut` VARCHAR(10) NOT NULL,
-  `totalPrice` FLOAT(10) NOT NULL,
+  `id` VARCHAR(50) PRIMARY KEY,
   `createdDate` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `userId` INT(10) NOT NULL,
+  `statut` VARCHAR(50) NOT NULL,
+  `totalPrice` FLOAT(10) NOT NULL,  
   `updatedDate` DATETIME,
   `shippingAddress` VARCHAR(255) NOT NULL,
+  `shippingNumber` VARCHAR(50),
   `shippingDate` DATETIME
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -73,12 +91,12 @@ CREATE TABLE `orders` (
 -- Table `orderProduct`
 --
 
-CREATE TABLE `orderDetails` (
-  `id` INT(10) PRIMARY KEY,
-  `orderId` INT(10) NOT NULL,
+CREATE TABLE `order_details` (
+  `id` INT(10) PRIMARY KEY AUTO_INCREMENT,
+  `orderId` VARCHAR(50) NOT NULL,
   `productId` VARCHAR(50) NOT NULL,
   `quantity` INT(10) NOT NULL,
-  `price` FLOAT(10) NOT NULL,
+  `priceUnit` FLOAT(10) NOT NULL,
   `discount` INT(10)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -87,11 +105,15 @@ CREATE TABLE `orderDetails` (
 -- Table `shippingAddress`
 --
 
-CREATE TABLE `shippingAddress` (
-  `userId` VARCHAR(50) NOT NULL,
-  `address` INT(10) NOT NULL,
-  `zipCode` INT(10) NOT NULL,
-  `city` VARCHAR(10) NOT NULL
+CREATE TABLE `shipping_address` (
+  `id` INT(10) PRIMARY KEY AUTO_INCREMENT,
+  `userId` INT(10) NOT NULL,
+    `lastName` VARCHAR(50) NOT NULL,
+  `firstName` VARCHAR(50) NOT NULL,
+  `phoneNumber` INT(10),
+  `address` VARCHAR(255) NOT NULL,
+  `zipCode` INT(5) NOT NULL,
+  `city` VARCHAR(50) NOT NULL
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 

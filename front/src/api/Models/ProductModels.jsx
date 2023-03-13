@@ -3,6 +3,7 @@ export default class Product {
     this._id = data.id
     this._name = data.name
     this._description = data.description
+    this._technical = data.technical
     this._price = data.price
     this._weight = data.weight
     this._brand = data.brand
@@ -18,6 +19,9 @@ export default class Product {
   }
   get description() {
     return this._description
+  }
+  get technical() {
+    return this._technical
   }
   get price() {
     return this._price

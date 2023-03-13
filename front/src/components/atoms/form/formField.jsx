@@ -3,12 +3,14 @@ export const FormField = ({
   name,
   defaultValue,
   onChange,
+  onBlur,
+  onFocus,
   type,
   children,
   style,
 }) => {
   return (
-    <div className={className}>
+    <div className={`${className} field`}>
       <label htmlFor={name}>{children}</label>
       <input
         type={type}
@@ -16,6 +18,8 @@ export const FormField = ({
         name={name}
         defaultValue={defaultValue}
         onChange={onChange}
+        onBlur={onBlur}
+        onFocus={onFocus}
         style={style}
       />
     </div>

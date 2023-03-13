@@ -7,6 +7,10 @@ export default function ProductForm({
   onSubmit,
   product,
   handleImage,
+  descValue,
+  techValue,
+  onChangeDesc,
+  onChangeTech,
 }) {
   return (
     <>
@@ -16,6 +20,15 @@ export default function ProductForm({
           name={product.description}
           className={className}
           children="Description"
+          value={descValue}
+          onChange={onChangeDesc}
+        />
+        <TextField
+          name={product.technical}
+          className={className}
+          children="Caractéristiques techniques"
+          value={techValue}
+          onChange={onChangeTech}
         />
         <FormField
           name={product.brand}
@@ -40,7 +53,12 @@ export default function ProductForm({
         <FormField
           name={product.category}
           className={className}
-          children="catégorie"
+          children="Catégorie"
+        />
+        <FormField
+          name={product.stock}
+          className={className}
+          children="Stock"
         />
         <FormField
           name={product.image}

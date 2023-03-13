@@ -11,19 +11,13 @@ export const Carousel = ({ className, slides }) => {
     setCurrentSlide((currentSlide - 1 + numSlides) % numSlides)
   }
 
-  // const slides = [
-  //   { image: 'image1.jpg', text: "text1", alt: 'Slide 1' },
-  //   { image: 'image2.jpg', text: "text2", alt: 'Slide 2' },
-  //   { image: 'image3.jpg', text: "text3", alt: 'Slide 3' },
-  // ]
-
   const numSlides = slides.length
 
   return (
     <div className={`${className}__carousel`}>
       <div
         className={`${className}__carousel__slides`}
-        style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+        style={{ transform: `translateX(-${currentSlide * 25}%)` }}
       >
         {slides.map((slide, index) => (
           <div

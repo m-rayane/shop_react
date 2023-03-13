@@ -16,6 +16,12 @@ export default class UserService {
     return res.map((data) => new User(data))
   }
 
+  async getEmails() {
+    const req = await getRequest('/users/emails')
+    const res = req.data
+    return res.map((data) => data)
+  }
+
   async getUser(id) {
     const req = await getRequest('/users/' + id)
     const res = req.data
@@ -30,6 +36,7 @@ export default class UserService {
   async createUser(data) {
     return await postRequest('/signup', data)
   }
+
   async logInUser(data) {
     return await postRequest('/login', data)
   }
@@ -44,8 +51,21 @@ export default class UserService {
     return await deleteRequest('/users/' + id)
   }
 
-  // delete request
-  async addShippingAddress(id) {
-    return await putRequest('/users/' + id + '/shippingAddress')
+  // ********** Shipping Address request **********
+
+  async addShippingAddress(id, data) {
+    return await postRequest('/shipping_address/' + id, data)
+  }
+
+  async getAllAddress() {
+    const req = await getRequest('/shipping_address')
+    const res = req.data
+    return res
+  }
+
+  async getShippingAddress(id) {
+    const req = await getRequest('/shipping_address/' + id)
+    const res = req.data
+    return res
   }
 }

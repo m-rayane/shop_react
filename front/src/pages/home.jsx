@@ -1,34 +1,70 @@
 import '../utils/styles/home.scss'
 
-import image1 from '../utils/images/main-1.jpg'
-import image2 from '../utils/images/main-2.jpg'
-import image3 from '../utils/images/main-3.jpg'
+import React, { useContext, useRef } from 'react'
+import { Link } from 'react-router-dom'
+import useScrollSnap from 'react-use-scroll-snap'
+import ImageGallery from 'react-image-gallery'
 
-import { Carousel } from '../components/atoms/carousel'
+import ProductMiniCard from '../components/organisms/product/ProductMiniCard'
 
-const slides = [
-  {
-    image: image1,
-    text: 'Profitez du plus beau spectacle chaque soir !',
-    alt: 'Slide 1',
-  },
-  {
-    image: image2,
-    text: "Vivez une expérience inoubliable au cœur de la nature - le milieu de nulle part n'a jamais été aussi accueillant !",
-    alt: 'Slide 2',
-  },
-  {
-    image: image3,
-    text: "Atteignez le sommet du confort avec notre tente de toit - l'expérience de camping ultime en pleine nature !",
-    alt: 'Slide 3',
-  },
-]
+import { imagesUrl } from '../api/Datas/photos'
+import { photos } from '../api/Datas/photos'
+
+import { Context } from '../utils/Context'
 
 export default function Home() {
+  const { productsData } = useContext(Context)
+
+  // const scrollRef = useRef(null)
+  // useScrollSnap({ ref: scrollRef, duration: 1, delay: 1 })
+
+  const linkStyle = {
+    color: 'inherit',
+    textDecoration: 'inherit',
+  }
+
   return (
+    // <div className="home" ref={scrollRef}>
     <div className="home">
-      <section className="home__section">
-        <Carousel className="home__section" slides={slides} />
+      <section className="home__section background--dark">
+        <h1 className="home__section__title">TENTE DE TOIT DE VOITURE</h1>
+        <button className="home__section__button">DECOUVREZ NOS TENTES</button>
+        <div className="home__section__gallery">
+          <ImageGallery
+            items={imagesUrl.selection}
+            showThumbnails={false}
+            infinite={true}
+            autoPlay={true}
+            showFullscreenButton={false}
+            showPlayButton={false}
+            showBullets={true}
+          />
+        </div>
+      </section>
+      <section className="home__section background--clear">
+        <ul className="home__section__products">
+          {productsData.map((product) => {
+            return (
+              <>
+                <li
+                  key={product._id}
+                  className="home__section__products__miniCard"
+                >
+                  <Link to={`/shop/${product._id}`} style={linkStyle}>
+                    <ProductMiniCard
+                      product={product}
+                      className="home__section__products__miniCard"
+                    />
+                  </Link>
+                </li>
+              </>
+            )
+          })}
+        </ul>
+      </section>
+      <section className="home__section background--dark">
+        <h2>Section 3</h2>
+        <p>This is the third section.</p>
       </section>
     </div>
   )

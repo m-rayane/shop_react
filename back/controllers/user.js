@@ -11,12 +11,12 @@ const tokenExpiresIn = 24 * 60 * 60 * 1000
 
 // to signup a new user
 exports.signup = (req, res, next) => {
-  console.log(req.body)
   bcrypt
     .hash(req.body.password, 10)
     .then((hash) => {
       const user = new User({
         ...req.body,
+        password: hash,
         role: 'user',
       })
       dbConnection.query('INSERT INTO users SET ?', user, (err, result) => {
@@ -51,11 +51,13 @@ exports.login = (req, res, next) => {
               const createdToken = jwt.sign(
                 { userId: result[0].id, role: result[0].role },
                 process.env.ACCESS_SECRET_TOKEN,
-                { expiresIn: tokenExpiresIn }
+                { expiresIn: '24h' }
               )
               res.cookie('jwt', createdToken, {
                 httpOnly: true,
-                tokenExpiresIn,
+                maxAge: tokenExpiresIn,
+                secure: true,
+                path: '/',
               })
               res.status(200).json({
                 lastName: result[0].lastName,
@@ -79,16 +81,34 @@ exports.login = (req, res, next) => {
 // to get all users
 
 exports.getAllUsers = async (req, res) => {
-  dbConnection.query('SELECT * FROM users', (err, result) => {
+  if (req.auth.role === 'admin') {
+    dbConnection.query('SELECT * FROM users', (err, result) => {
+      if (err) return res.status(500).json(err)
+      if (result === 0) return res.status(404).json([])
+      const users = result.map((user) => {
+        return {
+          userId: user.id,
+          lastName: user.lastName,
+          firstName: user.firstName,
+          email: user.email,
+          role: user.role,
+        }
+      })
+      res.status(200).json(users)
+    })
+  } else {
+    res.status(401).json({ message: 'Not authorized' })
+  }
+}
+
+// to get all email
+exports.getAllEmails = async (req, res) => {
+  dbConnection.query('SELECT email FROM users', (err, result) => {
     if (err) return res.status(500).json(err)
     if (result === 0) return res.status(404).json([])
     const users = result.map((user) => {
       return {
-        userId: user.id,
-        lastName: user.lastName,
-        firstName: user.firstName,
         email: user.email,
-        role: user.role,
       }
     })
     res.status(200).json(users)
@@ -120,15 +140,14 @@ exports.getUserData = async (req, res, next) => {
 
 //to logout
 exports.logout = (req, res, next) => {
-  res.clearCookie('jwt')
+  res.cookie('jwt', ' ', { maxAge: 1 })
+  res.redirect('/')
   console.log('You are deconnected')
 }
 
 // to edit an user
 exports.editUser = (req, res, next) => {
   if (req.auth.role === 'admin' || req.body.userId == req.auth.userId) {
-    console.log(req.body)
-    console.log(req.params)
     const userData = { ...req.body }
     dbConnection.query(
       'UPDATE users SET ? WHERE id = ?',
@@ -146,19 +165,55 @@ exports.editUser = (req, res, next) => {
 // to add shipping address
 exports.addShippingAddress = (req, res, next) => {
   if (req.auth.role === 'admin' || req.body.userId == req.auth.userId) {
-    const userData = { ...req.body }
+    const addressData = { ...req.body }
     dbConnection.query(
-      'UPDATE shippingAddress SET ? WHERE userId = ?',
-      [userData, req.params.id],
+      'INSERT INTO shipping_address SET ?',
+      addressData,
       (err, result) => {
         if (err) return res.status(500).json(err)
-        return res.status(200).json({ message: 'Updated profile !' })
+        return res.status(200).json({ message: 'address added !' })
       }
     )
   } else {
     res.status(401).json({ message: 'Not authorized' })
   }
 }
+
+exports.getShippingAddress = (req, res, next) => {
+  if (req.params.id == req.auth.userId) {
+    dbConnection.query(
+      'SELECT * FROM shipping_address WHERE userId = ?',
+      req.params.id,
+      (err, result) => {
+        if (err) return res.status(500).json(err)
+        if (result === 0)
+          return res.status(404).json({ error: 'Address not found !' })
+        const data = result.map((address) => {
+          return {
+            ...address,
+          }
+        })
+        res.status(200).json(data)
+      }
+    )
+  } else {
+    res.status(401).json({ message: 'Not authorized' })
+  }
+}
+
+exports.getAllAddress = async (req, res) => {
+  dbConnection.query('SELECT * FROM shipping_address', (err, result) => {
+    if (err) return res.status(500).json(err)
+    if (result === 0) return res.status(404).json([])
+    const data = result.map((address) => {
+      return {
+        ...address,
+      }
+    })
+    res.status(200).json(data)
+  })
+}
+
 // not active yet because we must implement to delete all posts and comments user
 
 // exports.deleteUser = (req, res, next) => {

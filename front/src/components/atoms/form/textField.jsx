@@ -1,4 +1,5 @@
 export const TextField = ({
+  value,
   className,
   name,
   rows,
@@ -13,6 +14,7 @@ export const TextField = ({
     <div className={className}>
       <label htmlFor={name}>{children}</label>
       <textarea
+        value={value}
         id={name}
         name={name}
         rows={rows}

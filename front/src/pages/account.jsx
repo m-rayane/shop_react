@@ -5,24 +5,73 @@ import '../utils/styles/account.scss'
 
 import Login from '../components/organisms/login'
 import Logout from '../components/molecules/logout'
-import AccountBoard from '../components/organisms/account/board'
+import DashBoard from '../components/organisms/account/dashboard'
 import Address from '../components/organisms/account/address'
 import AccountDetails from '../components/organisms/account/details'
 import OrderList from '../components/organisms/account/orderList'
+import {
+  toAddShippingAddress,
+  toHandleTestField,
+} from '../components/atoms/Services/accountServices'
 
 import { Context } from '../utils/Context'
 
 export default function Account() {
-  const { userData } = useContext(Context)
-  const [showSection, setShowSection] = useState('accountBoard')
+  const {
+    userData,
+    shippingAddress,
+    ordersByUser,
+    getShippingAddress,
+    targetCategory,
+    accountCategories,
+    getUser,
+  } = useContext(Context)
+  const [showSection, setShowSection] = useState('dashboard')
+  const [errorMsg, setErrorMsg] = useState('')
+  const [category, setCategory] = useState('')
 
-  const primaryColor = '#565656'
+  useEffect(() => {
+    setCategory(targetCategory)
+  }, [targetCategory])
 
   const handleShowSection = (section) => {
     setShowSection(section)
   }
 
-  console.log(userData)
+  const handleSubmitErrorMsg = (errorMsg) => {
+    setErrorMsg(errorMsg)
+  }
+
+  const handleAddBillingAddress = async (e) => {
+    toAddShippingAddress(
+      e,
+      accountCategories.billing,
+      userData,
+      {
+        errorMsg: handleSubmitErrorMsg,
+      },
+      'billing'
+    )
+    getUser()
+  }
+
+  const handleAddShippingAddress = async (e) => {
+    toAddShippingAddress(e, accountCategories.shipping, userData, {
+      errorMsg: handleSubmitErrorMsg,
+    })
+    getShippingAddress()
+  }
+
+  const handleTestFields = () => {
+    toHandleTestField(
+      targetCategory.category,
+      targetCategory.name,
+      targetCategory.message,
+      {
+        errorMsg: handleSubmitErrorMsg,
+      }
+    )
+  }
 
   return (
     <>
@@ -31,15 +80,15 @@ export default function Account() {
         <>
           <div className="account">
             <section className="account">
-              <h1 className="">VOTRE COMPTE</h1>
+              <h2 className="">VOTRE COMPTE</h2>
               <div className="account__main">
                 <nav className="account__main__nav">
                   <ul>
                     <li
                       className="account__main__nav__accountBoard"
-                      onClick={() => handleShowSection('accountBoard')}
+                      onClick={() => handleShowSection('dashboard')}
                     >
-                      Tableau de bord
+                      Tabeau de bord
                     </li>
                     <li
                       className="account__main__nav__orderList"
@@ -67,10 +116,27 @@ export default function Account() {
                   </ul>
                 </nav>
                 <div className="account__main__content">
-                  {showSection === 'accountBoard' && <AccountBoard />}
-                  {showSection === 'orderList' && <OrderList />}
-                  {showSection === 'address' && <Address />}
-                  {showSection === 'accountDetails' && <AccountDetails />}
+                  {showSection === 'dashboard' && (
+                    <DashBoard userData={userData} orders={ordersByUser} />
+                  )}
+                  {showSection === 'orderList' && (
+                    <OrderList userData={userData} orders={ordersByUser} />
+                  )}
+                  {showSection === 'address' && (
+                    <Address
+                      userData={userData}
+                      shippingAddress={shippingAddress}
+                      onSubmitBillingAddress={handleAddBillingAddress}
+                      onSubmitShippingAddress={handleAddShippingAddress}
+                      errorMsg={errorMsg}
+                      handleBlur={handleTestFields}
+                      handleChange={() => setErrorMsg('')}
+                      categories={accountCategories}
+                    />
+                  )}
+                  {showSection === 'accountDetails' && (
+                    <AccountDetails userData={userData} />
+                  )}
                 </div>
               </div>
             </section>

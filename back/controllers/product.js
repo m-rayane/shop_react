@@ -28,7 +28,8 @@ exports.getOneProduct = (req, res, next) => {
 
 // to create a product
 exports.createProduct = (req, res) => {
-  const brand = req.body.brand.split(' ').join('').substring(0, 3).toUpperCase()
+  console.log(req.body)
+  const brand = req.body.brand.split(' ').join('').substring(0, 1).toUpperCase()
   const model = req.body.model.split(' ').join('').substring(0, 3).toUpperCase()
   const date = new Date(Date.now())
   const product = new Product({
@@ -39,11 +40,13 @@ exports.createProduct = (req, res) => {
       randomNumber,
     name: req.body.name,
     description: req.body.description,
+    technical: req.body.technical,
     price: req.body.price,
     weight: req.body.weight,
     brand: req.body.brand,
     model: req.body.model,
     category: req.body.category,
+    stock: req.body.stock,
     image: req.file
       ? `${req.protocol}://${req.get('host')}/images/products/${
           req.file.filename
@@ -132,4 +135,30 @@ exports.deleteProduct = (req, res, next) => {
   } else {
     res.status(401).json({ message: 'Not authorized' })
   }
+}
+
+// to add an option
+exports.addOption = (req, res) => {
+  const option = { ...req.body }
+  dbConnection.query(
+    'INSERT INTO product_options SET ? ',
+    option,
+    (err, result) => {
+      if (err) return res.status(500).json(err)
+      res.status(201).json({ message: 'Product created !' })
+    }
+  )
+}
+
+// to get option of product page
+exports.getOption = (req, res, next) => {
+  dbConnection.query(
+    'SELECT * FROM product_options WHERE productId = ?',
+    req.params.id,
+    (err, result) => {
+      if (err) return res.status(500).json(err)
+      if (result === 0) return res.status(404).json([])
+      res.status(200).json(result)
+    }
+  )
 }

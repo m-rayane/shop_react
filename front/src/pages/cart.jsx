@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { Context } from '../utils/Context'
-import { updateCart, deleteProduct } from '../components/atoms/cartSerivces'
 
 import {
   regexName,
@@ -16,22 +15,44 @@ import {
 
 import OrderServices from '../api/Services/OrderServices'
 import UserService from '../api/Services/UserServices'
-import FormData from 'form-data'
 
 import CartDetails from '../components/organisms/cartDetails'
 import BillingForm from '../components/organisms/billingForm'
 import CustomerInfo from '../components/organisms/customerInfo'
 import { SignInForm } from '../components/molecules/signInForm'
 
+import { toLogin } from '../components/atoms/Services/authServices'
+import {
+  toAddShippingAddress,
+  toHandleTestField,
+} from '../components/atoms/Services/accountServices'
+
 const Cart = () => {
-  const { productsData, userData, usersData } = useContext(Context)
+  const {
+    productsData,
+    userData,
+    usersEmails,
+    shippingAddress,
+    getShippingAddress,
+    getProducts,
+    accountCategories,
+    targetCategory,
+    getUser,
+  } = useContext(Context)
   const [cartData, setCartData] = useState()
   const [totalPrice, setTotalPrice] = useState(0)
   const [isValidated, setIsValidated] = useState(false)
   const [isLogin, setIsLogin] = useState(false)
-  const [error, setError] = useState('')
+  const [isCreatingAnAccount, setIsCreatingAnAccount] = useState(false)
+  const [shippingAddressChecked, setShippingAddressChecked] = useState(false)
+  const [errorMsg, setErrorMsg] = useState('')
   const [errorBtn, setErrorBtn] = useState('')
+  const [targetAddress, setTargetAddress] = useState()
+  const [selectedShippingAddress, setSelectedShippingAddress] = useState()
 
+  const selectedAddress = shippingAddress.find(
+    (address) => address.id === targetAddress
+  )
   const orderServices = new OrderServices()
   const userServices = new UserService()
   const navigate = useNavigate()
@@ -39,9 +60,26 @@ const Cart = () => {
   const createAnAccount = document.getElementById('createAnAccount')
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem('cart'))
-    setCartData(data)
-  }, [])
+    setSelectedShippingAddress({
+      address: userData.address,
+      zipCode: userData.zipCode,
+      city: userData.city,
+    })
+  }, [userData])
+
+  useEffect(() => {
+    if (targetAddress !== null && shippingAddressChecked) {
+      setSelectedShippingAddress(selectedAddress)
+    } else {
+      setSelectedShippingAddress({
+        address: userData.address,
+        zipCode: userData.zipCode,
+        city: userData.city,
+      })
+    }
+  }, [selectedAddress, targetAddress, shippingAddressChecked, userData])
+
+  useEffect(() => {}, [selectedAddress, targetAddress])
 
   useEffect(() => {
     let totalPrice = 0
@@ -61,9 +99,12 @@ const Cart = () => {
     setIsValidated(true)
   }
 
-  const handleOrderSubmit = async (e) => {
+  function handleChangeCreatingAnAccount() {
+    setIsCreatingAnAccount(!isCreatingAnAccount)
+  }
+
+  const handleCreateAnAccount = async (e) => {
     e.preventDefault()
-    console.log('order submit')
     // setIsValidated(false)
     if (createAnAccount && createAnAccount.checked) {
       // setError('')
@@ -87,38 +128,41 @@ const Cart = () => {
       const cityTest = regexCity.test(cityValue)
       const phoneNumberTest = regexPhone.test(phoneValue)
 
-      const isEmail = usersData.find((user) => user._email === emailValue)
-      isEmail ? setError('Email already exist') : console.log('email ok')
+      const isEmail = usersEmails.find((user) => user.email === emailValue)
+      isEmail ? setErrorMsg('Email already exist') : console.log('email ok')
 
       if (firstNameTest === false || firstNameValue.trim() === '') {
-        setError("Le prénom n'est pas valide !")
+        setErrorMsg("Le prénom n'est pas valide !")
         setErrorBtn('errorBtn')
       } else if (lastNameTest === false || lastNameValue.trim() === '') {
-        setError("Le nom n'est pas valide !")
+        setErrorMsg("Le nom n'est pas valide !")
         setErrorBtn('errorBtn')
       } else if (emailTest === false || emailValue.trim() === '') {
-        setError("L'adresse email n'est pas valide !")
+        setErrorMsg("L'adresse email n'est pas valide !")
         setErrorBtn('errorBtn')
       } else if (passwordTest === false || passwordValue.trim() === '') {
-        setError(
+        setErrorMsg(
           "Le mot de passe choisi n'est pas valide. Il doit contenir au moins 8 caractères, 1 majuscule, 1 minuscule et un chiffre. Les caractères spéciaux suivants ! @ # $ % ^ & * sont également authorisés."
         )
         setErrorBtn('errorBtn')
       } else if (passwordTest === false || passwordValue.trim() === '') {
-        setError('Le mot de passe ne correspond pas !')
+        setErrorMsg('Le mot de passe ne correspond pas !')
         setErrorBtn('errorBtn')
       } else if (addressTest === false || addressValue.trim() === '') {
-        setError("L'adresse renseignée n'est pas valide !")
+        setErrorMsg("L'adresse renseignée n'est pas valide !")
         setErrorBtn('errorBtn')
       } else if (zipCodeTest === false || zipCodeValue.trim() === '') {
-        setError("Le code postal renseigné n'est pas valide !")
+        setErrorMsg("Le code postal renseigné n'est pas valide !")
         setErrorBtn('errorBtn')
       } else if (cityTest === false || cityValue.trim() === '') {
-        setError("La ville renseignée n'est pas valide !")
+        setErrorMsg("La ville renseignée n'est pas valide !")
         setErrorBtn('errorBtn')
       } else if (phoneNumberTest === false || phoneValue.trim() === '') {
-        setError("La ville renseignée n'est pas valide !")
+        setErrorMsg("La ville renseignée n'est pas valide !")
         setErrorBtn('errorBtn')
+      } else if (isEmail) {
+        setErrorMsg('Un compte avec cette adresse email existe déjà !')
+        console.log('Un compte avec cette adresse email existe déjà !')
       } else {
         try {
           const userData = {
@@ -155,77 +199,107 @@ const Cart = () => {
                 response.data.tokenExpiration
               )
             })
+            getProducts()
           }
         }
       }
     }
+  }
 
-    if (userData.id) {
+  const handleSubmitErrorMsg = (errorMsg) => {
+    setErrorMsg(errorMsg)
+  }
+
+  const handleAddBillingAddress = async (e) => {
+    toAddShippingAddress(
+      e,
+      accountCategories.billing,
+      userData,
+      {
+        errorMsg: handleSubmitErrorMsg,
+      },
+      'billing'
+    )
+    console.log(getUser(userData.id))
+    getUser(userData.id)
+  }
+
+  const handleAddShippingAddress = async (e) => {
+    toAddShippingAddress(
+      e,
+      accountCategories.shipping,
+      userData,
+      {
+        errorMsg: handleSubmitErrorMsg,
+      },
+      'shipping'
+    )
+    getShippingAddress()
+  }
+
+  useEffect(() => {
+    const data = JSON.parse(localStorage.getItem('cart'))
+    setCartData(data)
+  }, [])
+
+  const handleOrderSubmit = async () => {
+    const newCartData = []
+    if (cartData) {
+      for (let i = 0; i < cartData.length; i++) {
+        const productInCart = productsData.find(
+          (p) => p._id === cartData[i].productId
+        )
+        if (productInCart) {
+          const orderProduct = {
+            productId: productInCart._id,
+            quantity: cartData[i].quantity,
+            price: productInCart._price,
+          }
+          newCartData.push(orderProduct)
+        }
+      }
+    }
+    if (userData.id && selectedShippingAddress) {
       const orderData = {
         userId: userData.id,
         totalPrice: totalPrice,
-        address: userData.address,
-        zipCode: userData.zipCode,
-        city: userData.city,
+        address: selectedShippingAddress.address,
+        zipCode: selectedShippingAddress.zipCode,
+        city: selectedShippingAddress.city,
+        orderDetails: newCartData,
       }
+      console.log(orderData)
 
       try {
-        // await orderServices.postOrder(orderData)
+        await orderServices.postOrder(orderData)
         console.log('Panier validé')
       } catch (error) {
         console.error(error)
       }
     } else {
-      console.log('Veuillez vous connecter')
+      console.log('Veuillez choisir une adresse de livraison. ')
     }
   }
 
-  const handleSubmitAddress = async (e) => {
-    e.preventDefault()
-    console.log('address submit')
-    const addressValue = e.target['address'].value
-    const zipCodeValue = e.target['zipCode'].value
-    const cityValue = e.target['city'].value
-    const phoneValue = e.target['phoneNumber'].value
+  //to submit login
+  const handleLogin = async (e) => {
+    toLogin(e, 'cart')
+    getShippingAddress()
+  }
 
-    const addressTest = regexAddress.test(addressValue)
-    const zipCodeTest = regexZipCode.test(zipCodeValue)
-    const cityTest = regexCity.test(cityValue)
-    const phoneNumberTest = regexPhone.test(phoneValue)
-
-    console.log(addressValue, zipCodeValue, cityValue, phoneValue)
-
-    if (addressTest === false || addressValue.trim() === '') {
-      setError("L'adresse renseignée n'est pas valide !")
-      setErrorBtn('errorBtn')
-    } else if (zipCodeTest === false || zipCodeValue.trim() === '') {
-      setError("Le code postal renseigné n'est pas valide !")
-      setErrorBtn('errorBtn')
-    } else if (cityTest === false || cityValue.trim() === '') {
-      setError("La ville renseignée n'est pas valide !")
-      setErrorBtn('errorBtn')
-    } else if (phoneNumberTest === false || phoneValue.trim() === '') {
-      setError("La ville renseignée n'est pas valide !")
-      setErrorBtn('errorBtn')
-    } else {
-      try {
-        const customerData = {
-          phoneNumber: phoneValue,
-          address: addressValue,
-          zipCode: zipCodeValue,
-          city: cityValue,
-        }
-        await userServices.editUser(userData.id, customerData)
-        window.location.reload()
-        setIsValidated(true)
-      } catch (err) {
-        console.error(err)
+  const handleTestFields = () => {
+    toHandleTestField(
+      targetCategory.category,
+      targetCategory.name,
+      targetCategory.message,
+      {
+        errorMsg: handleSubmitErrorMsg,
       }
-    }
+    )
   }
 
   return (
-    <div>
+    <div className="cart">
       {cartData && cartData.length === 0 ? (
         <p>Votre panier est vide.</p>
       ) : (
@@ -235,7 +309,17 @@ const Cart = () => {
               {userData.id ? (
                 <CustomerInfo
                   userData={userData}
-                  onSubmit={handleSubmitAddress}
+                  shippingAddress={shippingAddress}
+                  onSubmitBillingAddress={handleAddBillingAddress}
+                  onSubmitShippingAddress={handleAddShippingAddress}
+                  targetAddress={targetAddress}
+                  setTargetAddress={setTargetAddress}
+                  isChecked={shippingAddressChecked}
+                  setIsChecked={setShippingAddressChecked}
+                  errorMsg={errorMsg}
+                  handleBlur={handleTestFields}
+                  categories={accountCategories}
+                  handleChange={() => setErrorMsg('')}
                 />
               ) : (
                 <>
@@ -250,30 +334,36 @@ const Cart = () => {
                   {isLogin && (
                     <>
                       <p>Connectez-vous</p>
-                      <form action="" className="">
+                      <form onSubmit={handleLogin} className="">
                         <SignInForm />
                         <button>Se connecter</button>
                       </form>
                     </>
                   )}
-                  <BillingForm />
+                  <form onSubmit={handleCreateAnAccount} className="">
+                    <BillingForm
+                      isCreating={isCreatingAnAccount}
+                      handleChange={handleChangeCreatingAnAccount}
+                    />
+                    <button>Créer un compte</button>
+                  </form>
                 </>
               )}
-              <form action="" className="" onSubmit={handleOrderSubmit}>
-                <CartDetails
-                  cartData={cartData}
-                  setTotalPrice={setTotalPrice}
-                />
-                <h3>Prix total : {totalPrice}€</h3>
-                <button>Valider le panier</button>
-              </form>
+
+              <CartDetails cartData={cartData} setTotalPrice={setTotalPrice} />
+              <h3>Prix total : {totalPrice}€</h3>
             </>
           )}
           {!isValidated && cartData && (
             <>
               <CartDetails cartData={cartData} setTotalPrice={setTotalPrice} />
               <h3>Prix total : {totalPrice}€</h3>
-              <button onClick={handleCartSubmit}>Valider le panier</button>
+              <button onClick={handleCartSubmit}>Valider la commande</button>
+            </>
+          )}
+          {isValidated && cartData && (
+            <>
+              <button onClick={handleOrderSubmit}>Commander</button>
             </>
           )}
         </>

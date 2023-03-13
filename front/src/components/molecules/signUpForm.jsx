@@ -1,6 +1,11 @@
 import { FormField } from '../atoms/form/formField'
 
-export const SignUpForm = ({ className, handleChange, handleEmailChange }) => {
+export const SignUpForm = ({
+  className,
+  handleChange,
+  handleEmailChange,
+  isCreating,
+}) => {
   return (
     <div className={className + '__fields'}>
       <FormField
@@ -27,22 +32,26 @@ export const SignUpForm = ({ className, handleChange, handleEmailChange }) => {
       >
         Adresse Email
       </FormField>
-      <FormField
-        name="signUpPassword"
-        className={className + '__fields__field'}
-        type="password"
-        onChange={handleChange}
-      >
-        Mot de passe
-      </FormField>
-      <FormField
-        name="confirmPassword"
-        className={className + '__fields__field'}
-        type="password"
-        onChange={handleChange}
-      >
-        Confirmez votre mot de passe
-      </FormField>
+      {isCreating && (
+        <>
+          <FormField
+            name="signUpPassword"
+            className={className + '__fields__field'}
+            type="password"
+            onChange={handleChange}
+          >
+            Mot de passe
+          </FormField>
+          <FormField
+            name="confirmPassword"
+            className={className + '__fields__field'}
+            type="password"
+            onChange={handleChange}
+          >
+            Confirmez votre mot de passe
+          </FormField>
+        </>
+      )}
     </div>
   )
 }

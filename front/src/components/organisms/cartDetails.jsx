@@ -1,7 +1,8 @@
+import '../../utils/styles/cart.scss'
 import React, { useEffect, useContext } from 'react'
 
 import { Context } from '../../utils/Context'
-import { updateCart, deleteProduct } from '../atoms/cartSerivces'
+import { updateCart, deleteProduct } from '../atoms/Services/cartSerivces'
 
 const CartDetails = ({ cartData, setTotalPrice }) => {
   const { productsData } = useContext(Context)
@@ -31,12 +32,12 @@ const CartDetails = ({ cartData, setTotalPrice }) => {
             const handleChangeQuantity = (e) => {
               updateCart(item.productId, e.target.value)
             }
-
             return (
               <li key={item.productId}>
                 {productData && (
                   <>
                     <p className="">
+                      <img src={productData._image} alt="Nom du produit" />
                       {productData._name} - Quantité :{' '}
                       <input
                         type="number"

@@ -6,17 +6,22 @@ import {
   deleteRequest,
 } from '../ApiCalls/apiRequests'
 
-export default class OrderServices {
+export default class OrderService {
   // ********** Order request **********
   // order request
   async postOrder(data) {
-    console.log(data)
     return await postRequest('/orders', data)
   }
 
   // get request
-  async getOrder() {
+
+  async getAllOrders() {
     const req = await getRequest('/orders')
+    const res = req.data
+    return res.map((data) => new Order(data))
+  }
+  async getOrdersByUser(id) {
+    const req = await getRequest('/orders/' + id)
     const res = req.data
     return res.map((data) => new Order(data))
   }

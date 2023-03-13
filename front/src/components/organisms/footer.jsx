@@ -7,5 +7,5 @@ import { Context } from '../../utils/Context'
 export default function Footer() {
   const {} = useContext(Context)
 
-  return <footer className="footer"></footer>
+  return <footer className="footer">FOOTER</footer>
 }

@@ -11,11 +11,11 @@ import { SignUpForm } from '../molecules/signUpForm'
 import { Context } from '../../utils/Context'
 import UserService from '../../api/Services/UserServices'
 
-import { toLogin, toSignUp } from '../atoms/authServices'
+import { toLogin } from '../atoms/Services/authServices'
 
 export default function Login() {
   const userServices = new UserService()
-  const { usersData, getUsers } = useContext(Context)
+  const { getProducts, getEmails, usersEmails } = useContext(Context)
   const navigate = useNavigate()
 
   const [error, setError] = useState('')
@@ -39,8 +39,10 @@ export default function Login() {
     const emailTest = regexEmail.test(emailValue)
     const passwordTest = regexPassword.test(passwordValue)
 
-    const isEmail = usersData.find((user) => user._email === emailValue)
-    isEmail ? setError('Email already exist') : console.log('email ok')
+    const isEmail = usersEmails.find((user) => user.email === emailValue)
+    isEmail
+      ? setError('Un compte avec cette adresse email existe déjà !')
+      : console.log('email ok')
 
     if (firstNameTest === false || firstNameValue.trim() === '') {
       setError("Le prénom n'est pas valide !")
@@ -59,6 +61,9 @@ export default function Login() {
     } else if (passwordValue !== confirmPasswordValue) {
       setError('Le mot de passe ne correspond pas !')
       setErrorBtn('errorBtn')
+    } else if (isEmail) {
+      setError('Un compte avec cette adresse email existe déjà !')
+      console.log('Un compte avec cette adresse email existe déjà !')
     } else {
       try {
         const userData = {
@@ -99,21 +104,9 @@ export default function Login() {
   }
 
   //to submit login
-  const handleLoginSubmit = async (e) => {
-    e.preventDefault()
-    try {
-      const userData = {
-        email: e.target['signInEmail'].value,
-        password: e.target['signInPassword'].value,
-      }
-      await userServices.logInUser(userData).then((response) => {
-        localStorage.setItem('userId', response.data.userId)
-        localStorage.setItem('expirationDate', response.data.tokenExpiration)
-      })
-      window.location.reload()
-    } catch (err) {
-      setError('Adresse email ou mot de passe incorrecte.')
-    }
+  const handleLogin = async (e) => {
+    toLogin(e, setError, 'account')
+    window.location.reload()
   }
 
   const handleSignInModal = async () => {
@@ -138,9 +131,9 @@ export default function Login() {
   }
 
   const handleEmailChange = () => {
-    getUsers()
+    getProducts()
     const emailValue = document.getElementById('signUpEmail').value
-    const isEmail = usersData.find((user) => user._email === emailValue)
+    const isEmail = usersEmails.find((user) => user.email === emailValue)
     isEmail ? setError('Email already exist') : setError('')
   }
   return (
@@ -167,7 +160,7 @@ export default function Login() {
           {isSignIn && (
             <div className="auth__content__login">
               <form
-                onSubmit={handleLoginSubmit}
+                onSubmit={handleLogin}
                 className="auth__content__login__form"
               >
                 <SignInForm
