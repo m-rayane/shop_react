@@ -1,28 +1,18 @@
-import { Button } from '../atoms/form/button'
+import { EditSvg } from '../atoms/svg/edit'
+import { DeleteSvg } from '../atoms/svg/delete'
 
-export const ModifyButtons = ({
-  name,
-  className,
-  handleDelete,
-  handleEdit,
-  role,
-}) => {
+export const ModifyButtons = ({ className, handleDelete, handleEdit }) => {
   return (
     <div className={`${className}`}>
-      <Button
-        name={name}
-        className={`${className}__editBtn`}
-        onClick={handleEdit}
-        children="Modifier"
-      />
-      {(role === 'admin' || role === 'allUser') && (
-        <Button
-          name={name}
-          className={`${className}__deleteBtn`}
-          onClick={handleDelete}
-          children="Supprimer"
-        />
-      )}
+      <div className={`${className}__editBtn svgButton`} onClick={handleEdit}>
+        <EditSvg />
+      </div>
+      <div
+        className={`${className}__deleteBtn svgButton`}
+        onClick={handleDelete}
+      >
+        <DeleteSvg />
+      </div>
     </div>
   )
 }

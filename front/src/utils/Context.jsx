@@ -17,19 +17,23 @@ export const ContextProvider = ({ children }) => {
   const [productsData, setProductsData] = useState([])
   const [shippingAddress, setShippingAddress] = useState([])
   const [ordersByUser, setOrdersByUser] = useState([])
+  const [allOrders, setAllOrders] = useState([])
   const [reviewsData, setReviewsData] = useState([])
   const userId = localStorage.getItem('userId')
   const expirationDate = localStorage.getItem('expirationDate')
+  const userRole = localStorage.getItem('role')
   const [isLoading, setIsLoading] = useState(true)
   const [targetProduct, setTargetProduct] = useState('')
   const [targetCategory, setTargetCategory] = useState('')
-
-  // console.log(document.cookie.indexOf('jwt'))
-  // if (document.cookie.indexOf('jwt') !== -1) {
-  //   console.log('jwt cookie ok')
-  // } else {
-  //   console.log('jwt cookie dont exist')
-  // }
+  const [targetAddress, setTargetAddress] = useState()
+  const [errorMsg, setErrorMsg] = useState()
+  const [additionnalComment, setAdditionnalComment] = useState()
+  const [shippingAddressChecked, setShippingAddressChecked] = useState(false)
+  const [selectedShippingAddress, setSelectedShippingAddress] = useState()
+  const [orderDetailByUser, setOrderDetailByUser] = useState([])
+  const [orderDetailByOrder, setOrderDetailByOrder] = useState([])
+  const [cartData, setCartData] = useState()
+  const [totalQuantity, setTotalQuantity] = useState()
 
   // to disconnect if token expired
   useEffect(() => {
@@ -37,6 +41,8 @@ export const ContextProvider = ({ children }) => {
       userServices.logoutUser()
       localStorage.removeItem('userId')
       localStorage.removeItem('expirationDate')
+      localStorage.removeItem('role')
+      window.location.reload()
     }
   }, [expirationDate])
 
@@ -56,13 +62,12 @@ export const ContextProvider = ({ children }) => {
           })
       }
       getUser()
-    } else {
     }
   }, [userId])
 
   // to get ALL users data
   useEffect(() => {
-    if (userId) {
+    if (userRole && userRole === 'admin') {
       const getUsers = async () => {
         setIsLoading(true)
         const response = await userServices.getUsers()
@@ -76,7 +81,7 @@ export const ContextProvider = ({ children }) => {
       }
       getUsers()
     }
-  }, [userId])
+  }, [userRole])
 
   // to get ALL users emails
   useEffect(() => {
@@ -123,6 +128,19 @@ export const ContextProvider = ({ children }) => {
   //   getAllAddress()
   // }, [userId])
 
+  // to get all orders
+  useEffect(() => {
+    if (userRole && userRole === 'admin') {
+      const getAllOrders = async () => {
+        setIsLoading(true)
+        const response = await orderServices.getAllOrders()
+        setAllOrders(response)
+        setIsLoading(false)
+      }
+      getAllOrders()
+    }
+  }, [userRole])
+
   // to get orders by user data
   useEffect(() => {
     if (userId) {
@@ -135,6 +153,29 @@ export const ContextProvider = ({ children }) => {
       getOrdersByUser()
     }
   }, [userId])
+
+  // to get orders details by user
+  useEffect(() => {
+    if (userId) {
+      const getOrderDetailByUser = async () => {
+        setIsLoading(true)
+        const response = await orderServices.getOrderDetailByUser(userId)
+        setOrderDetailByUser(response.reverse())
+        setIsLoading(false)
+      }
+      getOrderDetailByUser()
+    }
+  }, [userId])
+
+  useEffect(() => {
+    let totalQuantity = 0
+    if (cartData) {
+      for (let i = 0; i < cartData.length; i++) {
+        totalQuantity += cartData[i].quantity
+      }
+      setTotalQuantity(totalQuantity)
+    }
+  }, [cartData])
 
   // functions for re-rendering on every new api call
   const getProducts = async () => {
@@ -155,7 +196,6 @@ export const ContextProvider = ({ children }) => {
 
   const getUser = async (id) => {
     const reRender = async () => {
-      console.log(id)
       const reqRes = await userServices.getUser(id)
       setUserData(reqRes)
     }
@@ -191,8 +231,8 @@ export const ContextProvider = ({ children }) => {
   const getAllOrders = async () => {
     if (userId) {
       const reRender = async () => {
-        const reqRes = await orderServices.getAllOrders(userId)
-        setShippingAddress(reqRes)
+        const reqRes = await orderServices.getAllOrders()
+        setAllOrders(reqRes)
       }
       reRender()
     }
@@ -208,6 +248,26 @@ export const ContextProvider = ({ children }) => {
     }
   }
 
+  const getOrderDetailByUser = async () => {
+    if (userId) {
+      const reRender = async () => {
+        const reqRes = await orderServices.getOrderDetailByUser(userId)
+        setOrderDetailByUser(reqRes)
+      }
+      reRender()
+    }
+  }
+
+  const getOrderDetailByOrder = async (orderId) => {
+    if (userId) {
+      const reRender = async () => {
+        const reqRes = await orderServices.getOrderDetailByOrder(orderId)
+        setOrderDetailByOrder(reqRes)
+      }
+      reRender()
+    }
+  }
+
   return (
     <Context.Provider
       value={{
@@ -217,23 +277,43 @@ export const ContextProvider = ({ children }) => {
         productsData,
         reviewsData,
         userId,
+        userRole,
         isLoading,
         targetProduct,
         targetCategory,
+        targetAddress,
         shippingAddress,
+        allOrders,
         ordersByUser,
+        orderDetailByUser,
+        orderDetailByOrder,
         accountCategories,
+        errorMsg,
+        additionnalComment,
+        shippingAddressChecked,
+        selectedShippingAddress,
+        cartData,
+        totalQuantity,
         getProducts,
         getReview,
         getUser,
         getUsers,
         getEmails,
+        getOrderDetailByUser,
+        getOrderDetailByOrder,
         setIsLoading,
         setTargetProduct,
         setTargetCategory,
+        setTargetAddress,
         getShippingAddress,
         getAllOrders,
         getOrdersByUser,
+        setErrorMsg,
+        setAdditionnalComment,
+        setShippingAddressChecked,
+        setSelectedShippingAddress,
+        setCartData,
+        setTotalQuantity,
       }}
     >
       {children}

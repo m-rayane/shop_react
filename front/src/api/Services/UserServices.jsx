@@ -68,4 +68,10 @@ export default class UserService {
     const res = req.data
     return res
   }
+
+  async deleteShippingAddress(id) {
+    const req = await deleteRequest('/shipping_address/' + id)
+    const res = req.data
+    return res
+  }
 }

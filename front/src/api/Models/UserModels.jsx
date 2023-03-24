@@ -1,6 +1,6 @@
 export default class User {
   constructor(data) {
-    this._id = data.userId
+    this._id = data.id
     this._createdDate = data.createdDate
     this._firstName = data.firstName
     this._lastName = data.lastName
@@ -9,7 +9,7 @@ export default class User {
     this._phoneNumber = data.phoneNumber
     this._address = data.address
     this._zipCode = data.zipCode
-    this._country = data.country
+    this._city = data.city
   }
 
   get id() {

@@ -2,18 +2,7 @@
 @import '../styles/mixins';
 @import '~react-image-gallery/styles/scss/image-gallery.scss';
 
-.product {
-  @include product;
-  margin-top: 100px;
-  &__card {
-    &__gallery {
-      display: flex;
-      justify-content: center;
-      width: 100%;
-      overflow: hidden;
-    }
-  }
-}
+@include product;
 
 .container {
   display: flex;
@@ -83,4 +72,8 @@
     width: 50px;
     height: 25px;
   }
+}
+
+.addProduct {
+  width: 80%;
 }

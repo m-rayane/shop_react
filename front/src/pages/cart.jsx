@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { useNavigate } from 'react-router-dom'
 
 import { Context } from '../utils/Context'
 
@@ -13,19 +12,18 @@ import {
   regexCity,
 } from '../utils/regex/regex'
 
-import OrderServices from '../api/Services/OrderServices'
 import UserService from '../api/Services/UserServices'
+import OrderService from '../api/Services/OrderServices'
+import EmailService from '../api/Services/EmailServices'
 
 import CartDetails from '../components/organisms/cartDetails'
 import BillingForm from '../components/organisms/billingForm'
 import CustomerInfo from '../components/organisms/customerInfo'
+import Summary from '../components/organisms/summary'
 import { SignInForm } from '../components/molecules/signInForm'
 
 import { toLogin } from '../components/atoms/Services/authServices'
-import {
-  toAddShippingAddress,
-  toHandleTestField,
-} from '../components/atoms/Services/accountServices'
+import { toHandleTestField } from '../components/atoms/Services/accountServices'
 
 const Cart = () => {
   const {
@@ -35,51 +33,64 @@ const Cart = () => {
     shippingAddress,
     getShippingAddress,
     getProducts,
-    accountCategories,
     targetCategory,
-    getUser,
+    targetAddress,
+    errorMsg,
+    setErrorMsg,
+    shippingAddressChecked,
+    selectedShippingAddress,
+    setSelectedShippingAddress,
+    cartData,
+    setCartData,
+    totalQuantity,
   } = useContext(Context)
-  const [cartData, setCartData] = useState()
+
   const [totalPrice, setTotalPrice] = useState(0)
   const [isValidated, setIsValidated] = useState(false)
   const [isLogin, setIsLogin] = useState(false)
   const [isCreatingAnAccount, setIsCreatingAnAccount] = useState(false)
-  const [shippingAddressChecked, setShippingAddressChecked] = useState(false)
-  const [errorMsg, setErrorMsg] = useState('')
   const [errorBtn, setErrorBtn] = useState('')
-  const [targetAddress, setTargetAddress] = useState()
-  const [selectedShippingAddress, setSelectedShippingAddress] = useState()
 
   const selectedAddress = shippingAddress.find(
     (address) => address.id === targetAddress
   )
-  const orderServices = new OrderServices()
   const userServices = new UserService()
-  const navigate = useNavigate()
+  const orderServices = new OrderService()
+  const emailServices = new EmailService()
 
   const createAnAccount = document.getElementById('createAnAccount')
 
   useEffect(() => {
     setSelectedShippingAddress({
+      firstName: userData.firstName,
+      lastName: userData.lastName,
+      phoneNumber: userData.phoneNumber,
       address: userData.address,
       zipCode: userData.zipCode,
       city: userData.city,
     })
-  }, [userData])
+  }, [userData, setSelectedShippingAddress])
 
   useEffect(() => {
     if (targetAddress !== null && shippingAddressChecked) {
       setSelectedShippingAddress(selectedAddress)
     } else {
       setSelectedShippingAddress({
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        phoneNumber: userData.phoneNumber,
         address: userData.address,
         zipCode: userData.zipCode,
         city: userData.city,
       })
     }
-  }, [selectedAddress, targetAddress, shippingAddressChecked, userData])
-
-  useEffect(() => {}, [selectedAddress, targetAddress])
+  }, [
+    selectedAddress,
+    setSelectedShippingAddress,
+    shippingAddressChecked,
+    targetAddress,
+    userData,
+  ])
 
   useEffect(() => {
     let totalPrice = 0
@@ -210,37 +221,10 @@ const Cart = () => {
     setErrorMsg(errorMsg)
   }
 
-  const handleAddBillingAddress = async (e) => {
-    toAddShippingAddress(
-      e,
-      accountCategories.billing,
-      userData,
-      {
-        errorMsg: handleSubmitErrorMsg,
-      },
-      'billing'
-    )
-    console.log(getUser(userData.id))
-    getUser(userData.id)
-  }
-
-  const handleAddShippingAddress = async (e) => {
-    toAddShippingAddress(
-      e,
-      accountCategories.shipping,
-      userData,
-      {
-        errorMsg: handleSubmitErrorMsg,
-      },
-      'shipping'
-    )
-    getShippingAddress()
-  }
-
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem('cart'))
     setCartData(data)
-  }, [])
+  }, [setCartData])
 
   const handleOrderSubmit = async () => {
     const newCartData = []
@@ -251,6 +235,7 @@ const Cart = () => {
         )
         if (productInCart) {
           const orderProduct = {
+            productName: productInCart._name,
             productId: productInCart._id,
             quantity: cartData[i].quantity,
             price: productInCart._price,
@@ -260,19 +245,46 @@ const Cart = () => {
       }
     }
     if (userData.id && selectedShippingAddress) {
+      console.log(newCartData)
       const orderData = {
         userId: userData.id,
         totalPrice: totalPrice,
+        firstName: selectedShippingAddress.firstName,
+        lastName: selectedShippingAddress.lastName,
+        phoneNumber: selectedShippingAddress.phoneNumber,
         address: selectedShippingAddress.address,
         zipCode: selectedShippingAddress.zipCode,
         city: selectedShippingAddress.city,
         orderDetails: newCartData,
       }
-      console.log(orderData)
 
       try {
-        await orderServices.postOrder(orderData)
+        const response = await orderServices.postOrder(orderData)
         console.log('Panier validé')
+        const emailDataAdmin = {
+          from: 'nodemailer38@gmail.com',
+          to: 'nodemailer38@gmail.com',
+          subject: `Nouvelle commande - ${response.data.orderId}`,
+          orderId: response.data.orderId,
+          title: `Nouvelle commande n° ${response.data.orderId}`,
+          text: `Une nouvelle commande a été passée avec succès. Le numéro de commande est : ${response.data.orderId}.`,
+          orderStatus: 'submitted',
+          orderDetails: newCartData,
+        }
+        const emailDataClient = {
+          from: 'nodemailer38@gmail.com',
+          to: userData.email,
+          subject: `Confirmation de commande - ${response.data.orderId}`,
+          title: `Nouvelle commande n° ${response.data.orderId}`,
+          orderId: response.data.orderId,
+          text: `Votre commande a été passée avec succès. Le numéro de commande est : ${response.data.orderId}.`,
+          orderStatus: 'submitted',
+          orderDetails: newCartData,
+        }
+        await Promise.all([
+          emailServices.sendEmail(emailDataAdmin),
+          emailServices.sendEmail(emailDataClient),
+        ])
       } catch (error) {
         console.error(error)
       }
@@ -300,72 +312,106 @@ const Cart = () => {
 
   return (
     <div className="cart">
-      {cartData && cartData.length === 0 ? (
-        <p>Votre panier est vide.</p>
+      {!cartData ? (
+        <h1>Votre panier est vide.</h1>
       ) : (
         <>
-          {isValidated && cartData && (
-            <>
-              {userData.id ? (
-                <CustomerInfo
-                  userData={userData}
-                  shippingAddress={shippingAddress}
-                  onSubmitBillingAddress={handleAddBillingAddress}
-                  onSubmitShippingAddress={handleAddShippingAddress}
-                  targetAddress={targetAddress}
-                  setTargetAddress={setTargetAddress}
-                  isChecked={shippingAddressChecked}
-                  setIsChecked={setShippingAddressChecked}
-                  errorMsg={errorMsg}
-                  handleBlur={handleTestFields}
-                  categories={accountCategories}
-                  handleChange={() => setErrorMsg('')}
+          <section className="cart__leftSection">
+            {!isValidated && cartData && (
+              <CartDetails
+                className="cart__leftSection__cartDetails"
+                cartData={cartData}
+                setTotalPrice={setTotalPrice}
+                totalQuantity={totalQuantity}
+              />
+            )}
+            {isValidated && cartData && (
+              <>
+                <CartDetails
+                  className="cart__leftSection__cartDetails"
+                  cartData={cartData}
+                  setTotalPrice={setTotalPrice}
                 />
-              ) : (
-                <>
-                  {!isLogin && (
-                    <div>
-                      Déjà client ?{' '}
-                      <p onClick={() => setIsLogin(true)}>
-                        Cliquez ici pour vous connecter
-                      </p>
-                    </div>
-                  )}
-                  {isLogin && (
-                    <>
-                      <p>Connectez-vous</p>
-                      <form onSubmit={handleLogin} className="">
-                        <SignInForm />
-                        <button>Se connecter</button>
-                      </form>
-                    </>
-                  )}
-                  <form onSubmit={handleCreateAnAccount} className="">
-                    <BillingForm
-                      isCreating={isCreatingAnAccount}
-                      handleChange={handleChangeCreatingAnAccount}
-                    />
-                    <button>Créer un compte</button>
-                  </form>
-                </>
-              )}
 
-              <CartDetails cartData={cartData} setTotalPrice={setTotalPrice} />
-              <h3>Prix total : {totalPrice}€</h3>
-            </>
-          )}
-          {!isValidated && cartData && (
-            <>
-              <CartDetails cartData={cartData} setTotalPrice={setTotalPrice} />
-              <h3>Prix total : {totalPrice}€</h3>
-              <button onClick={handleCartSubmit}>Valider la commande</button>
-            </>
-          )}
-          {isValidated && cartData && (
-            <>
-              <button onClick={handleOrderSubmit}>Commander</button>
-            </>
-          )}
+                {userData.id ? (
+                  <CustomerInfo
+                    className="cart__leftSection__customerInfo"
+                    userData={userData}
+                    errorMsg={errorMsg}
+                    setErrorMsg={setErrorMsg}
+                    handleBlur={handleTestFields}
+                    handleChange={() => setErrorMsg('')}
+                    origin="cart"
+                  />
+                ) : (
+                  <>
+                    {!isLogin && (
+                      <>
+                        <div
+                          className="cart__leftSection__customer"
+                          onClick={() => setIsLogin(true)}
+                        >
+                          <p>Déjà client ?</p>
+                          <p
+                            style={{
+                              cursor: 'pointer',
+                              textDecoration: 'underline',
+                            }}
+                          >
+                            Cliquez ici pour vous connecter
+                          </p>
+                        </div>
+                        <form
+                          onSubmit={handleCreateAnAccount}
+                          className="cart__leftSection__customer__billingForm"
+                        >
+                          <BillingForm
+                            isCreating={isCreatingAnAccount}
+                            handleChange={handleChangeCreatingAnAccount}
+                            handleBlur={handleTestFields}
+                            handleAddressFormChange={() => setErrorMsg('')}
+                          />
+                          <button>Créer un compte</button>
+                        </form>
+                      </>
+                    )}
+                    {isLogin && (
+                      <div className="cart__leftSection__toConnect">
+                        <div className="cart__leftSection__toConnect__title">
+                          <p>Connectez-vous !</p>
+                          <p
+                            onClick={() => setIsLogin(false)}
+                            style={{
+                              cursor: 'pointer',
+                              textDecoration: 'underline',
+                            }}
+                          >
+                            {' '}
+                            Ou continuez...
+                          </p>
+                        </div>
+                        <form onSubmit={handleLogin} className="">
+                          <SignInForm />
+                          <button>Se connecter</button>
+                        </form>
+                      </div>
+                    )}
+                  </>
+                )}
+              </>
+            )}
+          </section>
+          <section className="cart__rightSection">
+            {cartData && (
+              <Summary
+                className="cart__rightSection__summary"
+                totalPrice={totalPrice}
+                isValidated={isValidated}
+                handleCartSubmit={handleCartSubmit}
+                handleOrderSubmit={handleOrderSubmit}
+              />
+            )}
+          </section>
         </>
       )}
     </div>

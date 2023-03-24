@@ -1,15 +1,13 @@
 import React, { useContext, useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 
 import '../utils/styles/shop.scss'
 
 import { Context } from '../utils/Context'
 
 import { Button } from '../components/atoms/form/button'
-import { ModifyButtons } from '../components/molecules/modifyButtons'
-import { ConfirmButtons } from '../components/molecules/confirmButtons'
 import AddProduct from '../components/organisms/product/addProduct'
-import ProductCard from '../components/organisms/product/productCard'
+import { ProductGrid } from '../components/organisms/product/productGrid'
 
 import { Filter } from '../components/organisms/filter'
 
@@ -17,16 +15,21 @@ export default function Shop({ id, name, addToCart }) {
   const { userData, productsData, getProducts } = useContext(Context)
   const [showAddProductForm, setShowAddProductForm] = useState(false)
   const [filteredProducts, setFilteredProducts] = useState(productsData)
-  const [targetProduct, setTargetProduct] = useState(false)
-  const [confirmDelete, setConfirmDelete] = useState(false)
-  const [isEditing, setIsEditing] = useState(false)
+  const [categoryText, setCategoryText] = useState('')
+  const { category } = useParams()
 
   const navigate = useNavigate()
 
-  const linkStyle = {
-    color: 'inherit',
-    textDecoration: 'inherit',
-  }
+  useEffect(() => {
+    setCategoryText('')
+    if (category) {
+      const categoryText = `${category
+        .replace(/-/g, ' ')
+        .charAt(0)
+        .toUpperCase()}${category.replace(/-/g, ' ').slice(1)}`
+      setCategoryText(categoryText)
+    }
+  }, [category])
 
   return (
     <>
@@ -54,95 +57,60 @@ export default function Shop({ id, name, addToCart }) {
           {showAddProductForm && <AddProduct />}
           {!showAddProductForm && (
             <>
-              {/* <div className="shop__content__filter">
+              <div className="shop__content__filter">
                 <Filter
                   productsData={productsData}
                   setFilteredProducts={setFilteredProducts}
                 />
-              </div> */}
-              <ul className="shop__content__product">
-                {filteredProducts.map((product) => {
-                  const handleAddToCart = () => {
-                    addToCart({ id, name, quantity: 1 })
-                  }
+              </div>
+              <div className="shop__content__nav">
+                <nav className="shop__content__nav__link">
+                  <Link
+                    to="/boutique"
+                    // style={{ textDecoration: 'none', color: 'black' }}
+                  >
+                    Boutique
+                  </Link>{' '}
+                  /{' '}
+                  <Link
+                    to={`/boutique/${category}`}
+                    // style={{ textDecoration: 'none', color: 'black' }}
+                  >
+                    {categoryText}
+                  </Link>
+                </nav>
+              </div>
+              <div className="shop__content__products">
+                {(category === 'tentes-de-toit' || !category) && (
+                  <>
+                    <div className="shop__content__products__tent">
+                      <h2 className="shop__content__products__tent__title">
+                        Les tentes de toit
+                      </h2>
+                      <ProductGrid
+                        products={filteredProducts}
+                        className="shop__content__products__tent__productGrid"
+                        category="Tentes de toit"
+                        origin="shop"
+                      />
+                    </div>
+                  </>
+                )}
 
-                  const handleEdit = (id) => {
-                    setIsEditing(true)
-                    setTargetProduct(id)
-                  }
-
-                  const handleDelete = (id) => {
-                    setConfirmDelete(true)
-                    setTargetProduct(id)
-                  }
-
-                  const handleCancel = (e) => {
-                    e.preventDefault()
-                    setConfirmDelete(false)
-                    navigate(`/shop`, { replace: true })
-                  }
-
-                  const handleConfirm = async (e) => {
-                    e.preventDefault()
-                    try {
-                      console.log('produit supprimé')
-                      console.log(product._id)
-                      // await productServices.deleteProduct(product._id)
-                      setConfirmDelete('')
-                      getProducts()
-                    } catch (error) {
-                      console.log(error)
-                    }
-                  }
-
-                  return (
-                    <>
-                      <li
-                        key={product._id}
-                        className="shop__content__products__product"
-                      >
-                        {userData.role === 'admin' && (
-                          <div className="shop__content__products__product__buttons">
-                            {!confirmDelete && (
-                              <ModifyButtons
-                                className={
-                                  'shop__content__products__product__buttons__modifyBtn'
-                                }
-                                role={userData.role}
-                                handleDelete={() => {
-                                  handleDelete(product._id)
-                                }}
-                                handleEdit={() => {
-                                  handleEdit(product._id)
-                                }}
-                              />
-                            )}
-
-                            {confirmDelete && targetProduct === product._id && (
-                              <ConfirmButtons
-                                message="Êtes-vous sûr de vouloir supprimer ?"
-                                name={name}
-                                className={
-                                  'shop__content__products__product__buttons__confirmBtn'
-                                }
-                                handleCancel={handleCancel}
-                                handleConfirm={handleConfirm}
-                              />
-                            )}
-                          </div>
-                        )}
-                        <Link to={`/shop/${product._id}`} style={linkStyle}>
-                          <ProductCard
-                            product={product}
-                            handleAddToCart={handleAddToCart}
-                            descLength="200"
-                          />
-                        </Link>
-                      </li>
-                    </>
-                  )
-                })}
-              </ul>
+                {(category === 'accéssoires' || !category) && (
+                  <div className="shop__content__products__accessory">
+                    <h2 className="shop__content__products__accessory__title">
+                      les accéssoires
+                    </h2>
+                    <ProductGrid
+                      products={filteredProducts}
+                      className="shop__content__products__accessory__productGrid"
+                      category="Accéssoires"
+                      origin="shop"
+                    />
+                  </div>
+                )}
+              </div>
             </>
           )}
         </div>

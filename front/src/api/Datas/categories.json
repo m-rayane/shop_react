@@ -1,5 +1,32 @@
+{
+"signup":[
+      {
+      "category": "firstName",
+      "name": "Prénom",
+      "message": "Le prénom",
+      "key": "firstName"
+    },
+    {
+      "category": "lastName",
+      "name": "Nom",
+      "message": "Le nom",
+      "key": "lastName"
+    },
+    {
+      "category": "signUpEmail",
+      "name": "Adresse email",
+      "message": "L'adresse email'",
+      "key": "email"
+    },
+    {
+      "category": "signUpPassword",
+      "name": "Mot de passe",
+      "message": "Le mot de passe",
+      "key": "password"
+    }
 
-  {
+    ],
+
     "shipping":[
       {
       "category": "shippingFirstName",
@@ -63,5 +90,5 @@
       "message": "La ville",
       "key": "city"
     }
-    ]
-  }
+  ]
+}

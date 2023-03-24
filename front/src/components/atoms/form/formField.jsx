@@ -8,6 +8,8 @@ export const FormField = ({
   type,
   children,
   style,
+  placeholder,
+  value,
 }) => {
   return (
     <div className={`${className} field`}>
@@ -21,6 +23,8 @@ export const FormField = ({
         onBlur={onBlur}
         onFocus={onFocus}
         style={style}
+        placeholder={placeholder}
+        value={value}
       />
     </div>
   )

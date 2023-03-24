@@ -1,5 +1,118 @@
+@import './variables'; // .auth {
+//   margin-top: 10vh;
+//   &__header {
+//     display: flex;
+//     &__btn {
+//       width: 50%;
+//       text-align: center;
+//     }
+//   }
+// }
 .auth {
-  margin-top: 100px;
+  margin-top: 10vh;
+  height: 80vh;
+
+  & > div {
+    margin: 1rem;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: auto;
+    width: 50vw;
+    min-width: 300px;
+    max-width: 400px;
+    border-radius: 3px;
+    box-shadow: 0px 0px 5px rgba($tertiary-color, 0.1);
+  }
+  &__header {
+    display: flex;
+    width: 100%;
+    &__btn {
+      cursor: pointer;
+      width: 50%;
+      padding: 1rem;
+      text-align: center;
+      // border: 1px solid rgba($tertiary-color, 0.75);
+      // background-color: rgba($tertiary-color, 0.1);
+      font-size: 1rem;
+      font-weight: bold;
+      color: rgba($tertiary-color, 0.5);
+      transition: color 0.1s ease-in-out;
+    }
+    &__btn:hover {
+      color: rgba($tertiary-color, 0.8);
+      background-color: rgba($tertiary-color, 0.15);
+      font-size: 1rem;
+    }
+    & > .activeBtn {
+      font-size: 1.2rem;
+      border-bottom: 0;
+      background-color: white;
+      color: $tertiary-color;
+      box-shadow: none;
+      @media (max-width: 768px) {
+        font-size: 1rem;
+      }
+    }
+  }
+  &__content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    height: 90%;
+    // border: 1px solid rgba($tertiary-color, 0.75);
+    border-top: 0;
+    & button {
+      background-color: $primary-color;
+      font-size: 1rem;
+      font-weight: bold;
+      transition: color 0.2s ease-in-out;
+      transition: box-shadow 0.4s ease-in-out;
+    }
+    & button:hover {
+      filter: brightness(1.1);
+    }
+    & .errorBtn {
+      color: $primary-color !important;
+      box-shadow: $primary-color 0px 0px 60px !important;
+    }
+    &__login,
+    &__signUp {
+      width: 100%;
+      &__form {
+        display: flex;
+        border: none;
+        box-shadow: none;
+        align-items: center;
+        border-radius: 0;
+        &__fields {
+          width: 100%;
+        }
+      }
+    }
+
+    &__message {
+      position: absolute;
+      top: 115%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100%;
+      text-align: center;
+      padding: 10px;
+      font-size: 1rem;
+      @media (min-width: 768px) {
+        font-size: 1rem;
+      }
+      &__error {
+        color: rgb(225, 0, 0);
+      }
+      &__validation {
+        color: greenyellow;
+      }
+    }
+  }
 }
 
 .field {

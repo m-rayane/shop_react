@@ -1,9 +1,18 @@
 @import './variables';
+@import './typography';
+
+body {
+  font-family: 'Lato-Regular';
+}
 
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+
+.screen {
+  min-width: 320px;
 }
 
 .errorMsg {
@@ -16,45 +25,79 @@
 .main {
   display: flex;
   justify-content: center;
+  background: rgb(240, 240, 240);
 }
 
 .header {
   position: fixed;
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  background: rgba(#000, 0.5);
+  background: rgba(#000, 1);
   width: 100%;
-  height: 10vh;
+  height: 6vh;
   padding: 0 3%;
   z-index: 5;
   &__logo {
+    display: flex;
+    align-items: center;
     text-align: center;
-    width: 30%;
     & > svg {
-      width: 200px;
+      height: 4vh;
     }
   }
   &__nav {
     display: flex;
     justify-content: flex-end;
+    align-items: center;
     color: white;
     gap: 20px;
-    width: 70%;
-    &__cartSvg {
-      fill: white;
-      width: 20px;
+    height: 4vh;
+    max-width: 40vw;
+    & * {
+      transition: all 0.1s linear;
     }
-    &__profileSvg {
+    & > a {
+      position: relative;
+    }
+    & svg {
       fill: white;
       stroke: white;
+      max-height: 4vh;
+      &:hover {
+        fill: $primary-color;
+        stroke: $primary-color;
+      }
+    }
+    &__cartSvg {
+      width: 20px;
+      &__cartQty {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        top: -10%;
+        right: -25%;
+        background: red;
+        font-size: 0.6rem;
+        color: white;
+        font-weight: 600;
+        width: 12px;
+        height: 12px;
+        border-radius: 6px;
+      }
+    }
+    &__profileSvg {
       stroke-width: 5;
       width: 15px;
     }
     &__contactSvg {
-      fill: white;
-      stroke: white;
       stroke-width: 5;
       width: 17px;
+    }
+    &__backSvg {
+      width: 20px;
+      stroke-width: 10;
     }
   }
 }
@@ -69,4 +112,174 @@
   &--dark {
     background: $tertiary-color;
   }
+}
+
+button {
+  padding: 0.5rem;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  background-color: $primary-color;
+  color: $tertiary-color;
+  border: none;
+  cursor: pointer;
+  transition: filter 0.2s ease-in-out;
+  &:hover {
+    filter: brightness(1.1);
+  }
+}
+
+input,
+textarea {
+  height: auto;
+  margin: 7px 0 7px 0;
+  padding: 5px;
+  border-radius: 3px;
+  font-size: 16px;
+  overflow: hidden;
+  resize: none;
+  &::placeholder {
+    opacity: 0.8;
+    font-size: 0.8rem;
+  }
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  background: white;
+  box-shadow: 0px 0px 5px rgba($tertiary-color, 0.1);
+  border-radius: 3px;
+  & > div {
+    display: flex;
+    flex-direction: column;
+  }
+  & {
+    input,
+    textarea {
+      background: rgb(240, 240, 240);
+      outline: none;
+      border: none;
+    }
+    input:focus,
+    textarea:focus {
+      outline: 1px solid $primary-color;
+      border: 1px solid $primary-color;
+    }
+    .imagePreview {
+      margin: 20px;
+      & > img {
+        width: 50vw;
+        object-fit: contain;
+        border: 1px solid $tertiary-color;
+        box-shadow: 2px 2px 5px $tertiary-color;
+      }
+    }
+  }
+}
+
+.svgButton {
+  & svg {
+    width: 10px;
+    height: 10px;
+  }
+}
+
+#editSvg,
+#deleteSvg,
+#cancelSvg,
+#confirmSvg {
+  width: 15px;
+  height: 15px;
+  margin: 1px;
+  cursor: pointer;
+  z-index: 5;
+  // fill: rgba($tertiary-color, 0.3);
+  &:hover {
+    fill: red;
+  }
+}
+
+.confirmBox {
+  z-index: 10;
+  position: absolute;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  background: white;
+  box-shadow: $tertiary-color 1px 1px 2px;
+  text-align: center;
+  &__btn {
+    display: flex;
+    justify-content: space-evenly;
+    gap: 1rem;
+    width: 50%;
+  }
+}
+
+input[type='number']::-webkit-inner-spin-button {
+  opacity: 1;
+}
+
+table {
+  border: 1px solid black;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  & td {
+    border: 1px solid black;
+    padding: 0.5rem;
+  }
+  & th {
+    border: 1px solid black;
+    padding: 0.5rem;
+  }
+}
+
+.link {
+  &:hover {
+    cursor: pointer;
+    text-decoration: underline;
+  }
+}
+
+.isLoading {
+  z-index: 10;
+  display: inline-block;
+  position: absolute;
+  top: 50%;
+  left: 45%;
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba($primary-color, 1);
+  border-radius: 50%;
+  border-top-color: $secondary-color;
+  animation: spin 0.8s ease-in-out infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+input[type='number'] {
+  width: 65px;
+  height: 35px;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 2px solid #ddd;
+}
+
+input[type='number']:focus {
+  outline: none;
+  border-color: #7fb3d5;
+  box-shadow: 0 0 5px #7fb3d5;
 }

@@ -1,26 +1,31 @@
 @import '../styles/variables';
 @import '../styles/mixins';
 
-@include form;
-
 .shop {
+  & li {
+    list-style: none;
+  }
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%;
-  margin-top: 75px;
+  width: 100vw;
+  margin-top: 12vh;
   &__header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1%;
-    width: 100%;
+    width: 95%;
   }
   &__content {
-    width: 100%;
+    width: 95%;
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-bottom: 1rem;
+    &__nav {
+      width: 100%;
+      @include navShop;
+    }
     &__filter {
       display: flex;
       justify-content: flex-start;
@@ -35,18 +40,15 @@
       }
     }
     &__products {
-      &__product {
-        position: relative;
-        @include product;
-        &__buttons {
-          position: absolute;
-          bottom: 10%;
-          right: 5%;
-          &__modifyBtn {
-            display: flex;
-            gap: 5%;
-          }
-        }
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      &__tent {
+        width: 100%;
+        @include productGrid;
+      }
+      &__accessory {
+        @include productGrid;
       }
     }
   }

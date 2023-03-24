@@ -1,4 +1,5 @@
-import { Button } from '../atoms/form/button'
+import { CancelSvg } from '../atoms/svg/cancel'
+import { ConfirmSvg } from '../atoms/svg/confirm'
 
 export const ConfirmButtons = ({
   name,
@@ -8,19 +9,18 @@ export const ConfirmButtons = ({
   message,
 }) => {
   return (
-    <div className={`${className}`}>
-      <Button
-        name={name}
-        className={`${className}__cancelBtn`}
-        onClick={handleCancel}
-        children="Annuler"
-      />
-      <Button
-        name={name}
-        className={`${className}__confirmBtn`}
-        onClick={handleConfirm}
-        children={message}
-      />
-    </div>
+    <>
+      <div className={`${className}`}>
+        <div className={`${className}__message`}>{message}</div>
+        <div className={`${className}__cancelBtn`}>
+          <div className={`${className}__cancelBtn`} onClick={handleCancel}>
+            <CancelSvg />
+          </div>
+          <div className={`${className}__confirmBtn`} onClick={handleConfirm}>
+            <ConfirmSvg />
+          </div>
+        </div>
+      </div>
+    </>
   )
 }

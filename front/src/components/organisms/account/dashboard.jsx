@@ -1,8 +1,16 @@
 import '../../../utils/styles/account.scss'
 
-import { Link } from 'react-router-dom'
+import { BillingAddress } from '../../molecules/billingAddress'
 
-export default function DashBoard({ userData, orders }) {
+export default function DashBoard({
+  userData,
+  orders,
+  className,
+  onSubmitBillingAddress,
+  handleBlur,
+  handleChange,
+  categories,
+}) {
   let lastOrder = []
 
   if (orders && orders.length > 0) {
@@ -13,9 +21,16 @@ export default function DashBoard({ userData, orders }) {
   }
   return (
     <div>
-      <h2>{`Bienvenue dans votre tableau de bord, ${userData.firstName} !`}</h2>
+      <h2>{`Bienvenue dans votre tableau de bord ${userData.firstName} !`}</h2>
       <div className="">
-        <h3>Vos coordonnées</h3>
+        <BillingAddress
+          className={`${className}`}
+          userData={userData}
+          onSubmitBillingAddress={onSubmitBillingAddress}
+          handleBlur={handleBlur}
+          handleChange={handleChange}
+          categories={categories}
+        />
       </div>
       <div className="">
         <h3>Votre dernière commande</h3>
@@ -25,7 +40,7 @@ export default function DashBoard({ userData, orders }) {
               <th>Order ID</th>
               <th>Date</th>
               <th>Prix</th>
-              <th>Statut</th>
+              <th>status</th>
             </tr>
           </thead>
           <tbody>
@@ -33,7 +48,7 @@ export default function DashBoard({ userData, orders }) {
               <td>{lastOrder.id}</td>
               <td>{lastOrder.createdDate}</td>
               <td>{lastOrder.totalPrice} €</td>
-              <td>{lastOrder.statut}</td>
+              <td>{lastOrder.status}</td>
             </tr>
           </tbody>
         </table>

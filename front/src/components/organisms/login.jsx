@@ -12,17 +12,21 @@ import { Context } from '../../utils/Context'
 import UserService from '../../api/Services/UserServices'
 
 import { toLogin } from '../atoms/Services/authServices'
+import { toHandleTestField } from '../atoms/Services/accountServices'
 
 export default function Login() {
   const userServices = new UserService()
-  const { getProducts, getEmails, usersEmails } = useContext(Context)
+  const { getProducts, targetCategory, usersEmails, getExpirationDate } =
+    useContext(Context)
   const navigate = useNavigate()
 
   const [error, setError] = useState('')
   const [isSignIn, setIsSignIn] = useState(true)
   const [activeSignInBtn, setActiveSignInBtn] = useState('activeBtn')
   const [activeSignUpBtn, setActiveSignUpBtn] = useState('')
+  const [errorMsg, setErrorMsg] = useState('')
   const [errorBtn, setErrorBtn] = useState('')
+  const [isCreating, setIsCreating] = useState('')
 
   // to submit signup
   const handleSignUpSubmit = async (e) => {
@@ -105,7 +109,7 @@ export default function Login() {
 
   //to submit login
   const handleLogin = async (e) => {
-    toLogin(e, setError, 'account')
+    toLogin(e, setError)
     window.location.reload()
   }
 
@@ -123,6 +127,7 @@ export default function Login() {
     setIsSignIn(false)
     setError('')
     setErrorBtn('')
+    setIsCreating(true)
   }
 
   const handleChange = async () => {
@@ -136,62 +141,80 @@ export default function Login() {
     const isEmail = usersEmails.find((user) => user.email === emailValue)
     isEmail ? setError('Email already exist') : setError('')
   }
+
+  const handleSubmitErrorMsg = (errorMsg) => {
+    setErrorMsg(errorMsg)
+  }
+
+  const handleTestFields = () => {
+    console.log(targetCategory)
+    toHandleTestField(
+      targetCategory.category,
+      targetCategory.name,
+      targetCategory.message,
+      {
+        errorMsg: handleSubmitErrorMsg,
+      }
+    )
+  }
+
   return (
     <>
       <div className="auth">
-        <div className="auth__header">
-          <button
-            className={'auth__header__btn ' + activeSignInBtn}
-            id="signInBtn"
-            onClick={handleSignInModal}
-          >
-            S'identifier
-          </button>
-          <button
-            className={'auth__header__btn ' + activeSignUpBtn}
-            id="signUpBtn"
-            onClick={handleSignUpModal}
-          >
-            Créer un compte
-          </button>
-        </div>
-
-        <div className="auth__content">
-          {isSignIn && (
-            <div className="auth__content__login">
-              <form
-                onSubmit={handleLogin}
-                className="auth__content__login__form"
-              >
-                <SignInForm
+        <div className="">
+          <div className="auth__header">
+            <div
+              className={'auth__header__btn ' + activeSignInBtn}
+              id="signInBtn"
+              onClick={handleSignInModal}
+            >
+              Se connecter
+            </div>
+            <div
+              className={'auth__header__btn ' + activeSignUpBtn}
+              id="signUpBtn"
+              onClick={handleSignUpModal}
+            >
+              Créer un compte
+            </div>
+          </div>
+          <div className="auth__content">
+            {isSignIn && (
+              <div className="auth__content__login">
+                <form
+                  onSubmit={handleLogin}
                   className="auth__content__login__form"
-                  handleChange={handleChange}
-                  errorBtn={errorBtn}
-                />
-                <button>Se connecter</button>
-              </form>
-            </div>
-          )}
-
-          {!isSignIn && (
-            <div className="auth__content__signUp">
-              <form
-                onSubmit={handleSignUpSubmit}
-                className="auth__content__signUp__form"
-              >
-                <SignUpForm
+                >
+                  <SignInForm
+                    className="auth__content__login__form"
+                    handleChange={handleChange}
+                    errorBtn={errorBtn}
+                  />
+                  <button>Se connecter</button>
+                </form>
+              </div>
+            )}
+            {!isSignIn && (
+              <div className="auth__content__signUp">
+                <form
+                  onSubmit={handleSignUpSubmit}
                   className="auth__content__signUp__form"
-                  handleChange={handleChange}
-                  handleEmailChange={handleEmailChange}
-                  errorBtn={errorBtn}
-                />
-                <button>Créer un compte</button>
-              </form>
+                >
+                  <SignUpForm
+                    className="auth__content__signUp__form"
+                    handleChange={handleChange}
+                    handleEmailChange={handleEmailChange}
+                    errorBtn={errorBtn}
+                    isCreating={isCreating}
+                    handleBlur={handleTestFields}
+                  />
+                  <button>Créer un compte</button>
+                </form>
+              </div>
+            )}
+            <div className="auth__content__message">
+              <div className="auth__content__message__error">{error}</div>
             </div>
-          )}
-
-          <div className="auth__content__message">
-            <div className="auth__content__message__error">{error}</div>
           </div>
         </div>
       </div>

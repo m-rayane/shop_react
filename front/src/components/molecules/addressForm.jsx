@@ -23,9 +23,8 @@ export const AddressForm = ({
               onChange={handleChange}
               onBlur={handleBlur}
               onFocus={() => setTargetCategory(item)}
-            >
-              {item.name}
-            </FormField>
+              placeholder={`${item.name}*`}
+            ></FormField>
           )
         })}
     </div>

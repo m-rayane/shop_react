@@ -1,4 +1,4 @@
-import '../../../utils/styles/App.scss'
+import '../../../utils/styles/product.scss'
 
 import { useEffect, useState, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -9,7 +9,7 @@ import FormData from 'form-data'
 import ProductForm from '../../molecules/productForm'
 import ProductServices from '../../../api/Services/ProductServices'
 
-export default function AddProduct({ className, handleSubmit }) {
+export default function AddProduct() {
   const { userData, getProducts } = useContext(Context)
   const postServices = new ProductServices()
   const navigate = useNavigate()
@@ -44,7 +44,7 @@ export default function AddProduct({ className, handleSubmit }) {
     console.log(file)
   }
 
-  async function HandleSubmit(e) {
+  const HandleSubmit = async (e) => {
     e.preventDefault()
     if (e.target[`${productInfo.description}`].value.trim() === '') {
       e.target[`${productInfo.description}`].value = ''
@@ -105,7 +105,7 @@ export default function AddProduct({ className, handleSubmit }) {
     <>
       <h2>AJOUTER UN PRODUIT</h2>
       <ProductForm
-        className={className}
+        className="addProduct"
         onSubmit={HandleSubmit}
         product={productInfo}
         handleImage={handleImageChange}

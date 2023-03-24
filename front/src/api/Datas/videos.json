@@ -1,0 +1,70 @@
+  {
+"star":[
+  { 
+    "type": "yt", 
+    "videoID" :"xy6iylftDDU",
+    "thumbnail": "https://img.youtube.com/vi/xy6iylftDDU/hqdefault.jpg"
+  },
+    { 
+    "type": "yt", 
+    "videoID" :"-epds6GKCtI",
+    "thumbnail": "https://img.youtube.com/vi/-epds6GKCtI/hqdefault.jpg"
+  },
+    { 
+    "type": "yt", 
+    "videoID" :"CzicVzDhKGg",
+    "thumbnail": "https://img.youtube.com/vi/CzicVzDhKGg/hqdefault.jpg"
+  }
+    ],
+    "chest":[
+  { 
+    "type": "yt", 
+    "videoID" :"BT62D_xQY9Y",
+    "thumbnail": "https://img.youtube.com/vi/BT62D_xQY9Y/hqdefault.jpg"
+  },
+    { 
+    "type": "yt", 
+    "videoID" :"EvOE8En0Nqw",
+    "thumbnail": "https://img.youtube.com/vi/EvOE8En0Nqw/hqdefault.jpg"
+  },
+      { 
+    "type": "yt", 
+    "videoID" :"hAFhc8WpAZE",
+    "thumbnail": "https://img.youtube.com/vi/hAFhc8WpAZE/hqdefault.jpg"
+  },
+      { 
+    "type": "yt", 
+    "videoID" :"RvpX0Uost28",
+    "thumbnail": "https://img.youtube.com/vi/RvpX0Uost28/hqdefault.jpg"
+  },
+      { 
+    "type": "yt", 
+    "videoID" :"3vmgCfbYWkc",
+    "thumbnail": "https://img.youtube.com/vi/3vmgCfbYWkc/hqdefault.jpg"
+  },
+      { 
+    "type": "yt", 
+    "videoID" :"TO8YaxlldCY",
+    "thumbnail": "https://img.youtube.com/vi/TO8YaxlldCY/hqdefault.jpg"
+  },
+    { 
+    "type": "yt", 
+    "videoID" :"WST9X4NB1YY",
+    "thumbnail": "https://img.youtube.com/vi/WST9X4NB1YY/hqdefault.jpg"
+  }
+    ],
+    "classic":[
+  { 
+    "type": "yt", 
+    "videoID" :"aEvjnauBFvA",
+    "thumbnail": "https://img.youtube.com/vi/aEvjnauBFvA/hqdefault.jpg"
+  }
+    ],
+    "adventure":[
+  { 
+    "type": "yt", 
+    "videoID" :"aEvjnauBFvA",
+    "thumbnail": "https://img.youtube.com/vi/aEvjnauBFvA/hqdefault.jpg"
+  }
+    ]
+  }

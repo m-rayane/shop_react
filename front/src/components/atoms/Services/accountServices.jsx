@@ -1,5 +1,7 @@
-import { useState } from 'react'
 import UserService from '../../../api/Services/UserServices'
+
+import { useContext } from 'react'
+import { Context } from '../../../utils/Context'
 
 import {
   regexName,
@@ -11,9 +13,9 @@ import {
 } from '../../../utils/regex/regex'
 
 const userServices = new UserService()
-
 export const toHandleTestField = (category, name, message, { errorMsg }) => {
   const field = document.getElementById(`${category}`)
+  console.log(category, message)
   let fieldTest = ''
   if (category.toLowerCase().includes('name')) {
     fieldTest = regexName.test(field.value)
@@ -29,7 +31,7 @@ export const toHandleTestField = (category, name, message, { errorMsg }) => {
     fieldTest = regexPhone.test(field.value)
   }
   if (fieldTest === false || field.value.trim() === '') {
-    field.style.border = '2px solid red'
+    field.style.border = '1px solid red'
     errorMsg(`${message} n'est pas valide !`)
   } else {
     field.style.border = ''
@@ -42,11 +44,12 @@ export const toAddShippingAddress = async (
   categories,
   userData,
   { errorMsg },
-  addressType
+  addressType,
+  getAddress
 ) => {
+  console.log(userData)
   e.preventDefault()
-  const newAddressData =
-    addressType === 'shipping' ? { userId: userData.id } : {}
+  const newAddressData = { userId: userData.id }
   for (let category of categories) {
     const field = e.target[`${category.category}`]
     let fieldTest = ''
@@ -64,7 +67,7 @@ export const toAddShippingAddress = async (
       fieldTest = regexPhone.test(field.value)
     }
     if (fieldTest === false || field.value.trim() === '') {
-      field.style.border = '2px solid red'
+      field.style.border = '1px solid red'
       errorMsg(`Veuillez remplir tous les champs.`)
     } else {
       field.style.border = ''
@@ -78,5 +81,18 @@ export const toAddShippingAddress = async (
       : await userServices.addShippingAddress(userData.id, newAddressData)
   } catch (err) {
     console.error(err)
+  }
+  addressType === 'billing' ? getAddress(userData.id) : getAddress()
+}
+
+export const toDeleteShippingAddress = async (
+  addressId,
+  getShippingAddress
+) => {
+  try {
+    await userServices.deleteShippingAddress(addressId)
+    getShippingAddress()
+  } catch (error) {
+    console.log(error)
   }
 }

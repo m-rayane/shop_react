@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
 
 import '../utils/styles/account.scss'
 
@@ -8,7 +7,7 @@ import Logout from '../components/molecules/logout'
 import DashBoard from '../components/organisms/account/dashboard'
 import Address from '../components/organisms/account/address'
 import AccountDetails from '../components/organisms/account/details'
-import OrderList from '../components/organisms/account/orderList'
+import OrdersByUser from '../components/organisms/account/ordersByUser'
 import {
   toAddShippingAddress,
   toHandleTestField,
@@ -27,6 +26,7 @@ export default function Account() {
     getUser,
   } = useContext(Context)
   const [showSection, setShowSection] = useState('dashboard')
+  const [showDetails, setShowDetails] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
   const [category, setCategory] = useState('')
 
@@ -50,9 +50,9 @@ export default function Account() {
       {
         errorMsg: handleSubmitErrorMsg,
       },
-      'billing'
+      'billing',
+      getUser
     )
-    getUser()
   }
 
   const handleAddShippingAddress = async (e) => {
@@ -79,67 +79,80 @@ export default function Account() {
       {userData.id && (
         <>
           <div className="account">
-            <section className="account">
-              <h2 className="">VOTRE COMPTE</h2>
-              <div className="account__main">
-                <nav className="account__main__nav">
-                  <ul>
-                    <li
-                      className="account__main__nav__accountBoard"
-                      onClick={() => handleShowSection('dashboard')}
-                    >
-                      Tabeau de bord
-                    </li>
-                    <li
-                      className="account__main__nav__orderList"
-                      onClick={() => handleShowSection('orderList')}
-                    >
-                      Commandes
-                    </li>
-                    <li
-                      className="account__main__nav__address"
-                      onClick={() => handleShowSection('address')}
-                    >
-                      Adresses
-                    </li>
-                    <li
-                      className="account__main__nav__accountDetails"
-                      onClick={() => handleShowSection('accountDetails')}
-                    >
-                      Details du compte
-                    </li>
-                    <Logout
-                      name="logout"
-                      className="account__logout"
-                      origin="account"
-                    />
-                  </ul>
-                </nav>
-                <div className="account__main__content">
-                  {showSection === 'dashboard' && (
-                    <DashBoard userData={userData} orders={ordersByUser} />
-                  )}
-                  {showSection === 'orderList' && (
-                    <OrderList userData={userData} orders={ordersByUser} />
-                  )}
-                  {showSection === 'address' && (
-                    <Address
-                      userData={userData}
-                      shippingAddress={shippingAddress}
-                      onSubmitBillingAddress={handleAddBillingAddress}
-                      onSubmitShippingAddress={handleAddShippingAddress}
-                      errorMsg={errorMsg}
-                      handleBlur={handleTestFields}
-                      handleChange={() => setErrorMsg('')}
-                      categories={accountCategories}
-                    />
-                  )}
-                  {showSection === 'accountDetails' && (
-                    <AccountDetails userData={userData} />
-                  )}
-                </div>
+            <div className="account__main">
+              <nav className="account__main__nav">
+                <ul>
+                  <li
+                    className="account__main__nav__accountBoard"
+                    onClick={() => handleShowSection('dashboard')}
+                  >
+                    Tabeau de bord
+                  </li>
+                  <li
+                    className="account__main__nav__orderList"
+                    onClick={() => handleShowSection('orderList')}
+                  >
+                    Commandes
+                  </li>
+                  <li
+                    className="account__main__nav__address"
+                    onClick={() => handleShowSection('address')}
+                  >
+                    Adresses
+                  </li>
+                  <li
+                    className="account__main__nav__accountDetails"
+                    onClick={() => handleShowSection('accountDetails')}
+                  >
+                    Details du compte
+                  </li>
+                  <Logout
+                    name="logout"
+                    className="account__logout"
+                    origin="account"
+                  />
+                </ul>
+              </nav>
+              <div className="account__main__content">
+                {showSection === 'dashboard' && (
+                  <DashBoard
+                    userData={userData}
+                    orders={ordersByUser}
+                    className="account__dashboard"
+                    onSubmitBillingAddress={handleAddBillingAddress}
+                    onSubmitShippingAddress={handleAddShippingAddress}
+                    errorMsg={errorMsg}
+                    handleBlur={handleTestFields}
+                    handleChange={() => setErrorMsg('')}
+                    categories={accountCategories}
+                  />
+                )}
+                {showSection === 'orderList' && (
+                  <OrdersByUser
+                    userData={userData}
+                    orders={ordersByUser}
+                    setShowDetails={setShowDetails}
+                    showDetails={showDetails}
+                  />
+                )}
+                {showSection === 'address' && (
+                  <Address
+                    className="account__address"
+                    userData={userData}
+                    shippingAddress={shippingAddress}
+                    onSubmitBillingAddress={handleAddBillingAddress}
+                    onSubmitShippingAddress={handleAddShippingAddress}
+                    errorMsg={errorMsg}
+                    handleBlur={handleTestFields}
+                    handleChange={() => setErrorMsg('')}
+                    categories={accountCategories}
+                  />
+                )}
+                {showSection === 'accountDetails' && (
+                  <AccountDetails userData={userData} />
+                )}
               </div>
-            </section>
+            </div>
           </div>
         </>
       )}

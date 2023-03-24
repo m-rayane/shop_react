@@ -10,25 +10,32 @@ import Footer from './components/organisms/footer'
 import Shop from './pages/shop'
 import Product from './pages/product'
 import Cart from './pages/cart'
+import BackOffice from './pages/backOffice'
 import Nowhere from './pages/404'
 
 import { Context } from './utils/Context'
 function App() {
-  const { productsData } = useContext(Context)
+  const { isLoading } = useContext(Context)
   return (
     <React.StrictMode>
       <div className="screen">
         <Router>
           <Header />
           <div className="main">
-            <Routes>
-              <Route exact path="/" element={<Home />} />
-              <Route exact path="/shop" element={<Shop />} />
-              <Route path={`/shop/:id`} element={<Product />}></Route>
-              <Route exact path="/account" element={<Account />} />
-              <Route exact path="/cart" element={<Cart />} />
-              <Route exact path="/*" element={<Nowhere />} />
-            </Routes>
+            {isLoading ? (
+              <div className="isLoading"></div>
+            ) : (
+              <Routes>
+                <Route exact path="/" element={<Home />} />
+                <Route exact path="/boutique" element={<Shop />} />
+                <Route path={`/boutique/:category`} element={<Shop />} />
+                <Route path={`/boutique/:category/:id`} element={<Product />} />
+                <Route exact path="/compte" element={<Account />} />
+                <Route exact path="/panier" element={<Cart />} />
+                <Route exact path="/back-office" element={<BackOffice />} />
+                <Route exact path="/*" element={<Nowhere />} />
+              </Routes>
+            )}
           </div>
           <Footer />
         </Router>

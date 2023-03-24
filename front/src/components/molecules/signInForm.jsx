@@ -8,17 +8,15 @@ export const SignInForm = ({ className, handleChange }) => {
         className={className + '__fields__field'}
         type="email"
         onChange={handleChange}
-      >
-        Email
-      </FormField>
+        placeholder="Adresse email*"
+      />
       <FormField
         name="signInPassword"
         className={className + '__fields__field'}
         type="password"
         onChange={handleChange}
-      >
-        Password
-      </FormField>
+        placeholder="Mot de passe*"
+      />
     </div>
   )
 }

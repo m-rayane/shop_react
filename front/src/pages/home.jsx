@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 import useScrollSnap from 'react-use-scroll-snap'
 import ImageGallery from 'react-image-gallery'
 
-import ProductMiniCard from '../components/organisms/product/ProductMiniCard'
+import { ProductGrid } from '../components/organisms/product/productGrid'
 
 import { imagesUrl } from '../api/Datas/photos'
 import { photos } from '../api/Datas/photos'
@@ -28,7 +28,11 @@ export default function Home() {
     <div className="home">
       <section className="home__section background--dark">
         <h1 className="home__section__title">TENTE DE TOIT DE VOITURE</h1>
-        <button className="home__section__button">DECOUVREZ NOS TENTES</button>
+        <Link to={`/boutique`} style={linkStyle}>
+          <button className="home__section__button">
+            DECOUVREZ NOS TENTES
+          </button>
+        </Link>
         <div className="home__section__gallery">
           <ImageGallery
             items={imagesUrl.selection}
@@ -42,25 +46,12 @@ export default function Home() {
         </div>
       </section>
       <section className="home__section background--clear">
-        <ul className="home__section__products">
-          {productsData.map((product) => {
-            return (
-              <>
-                <li
-                  key={product._id}
-                  className="home__section__products__miniCard"
-                >
-                  <Link to={`/shop/${product._id}`} style={linkStyle}>
-                    <ProductMiniCard
-                      product={product}
-                      className="home__section__products__miniCard"
-                    />
-                  </Link>
-                </li>
-              </>
-            )
-          })}
-        </ul>
+        <ProductGrid
+          products={productsData}
+          className="home__section__products"
+          category="Tente de toit"
+          origin="home"
+        />
       </section>
       <section className="home__section background--dark">
         <h2>Section 3</h2>
