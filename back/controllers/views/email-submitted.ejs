@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Nouvelle commande</title>
+    <style>
+        /* Styles CSS pour le corps de l'email */
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            color: #333;
+        }
+
+        /* Styles CSS pour la signature avec le logo */
+        .signature {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #ccc;
+            text-align: center;
+        }
+
+        .logo {
+            max-width: 150px;
+            height: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <h1><%= title %></h1>
+    <p><%= text %></p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Produit</th>
+                    <th>Quantité</th>
+                    <th>Prix unitaire</th>
+                    <th>Prix total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% orderDetails.forEach(function(product) { %>
+                    <tr>
+                        <td>
+                            <%= product.productName %>
+                        </td>
+                        <td>
+                            <%= product.quantity %>
+                        </td>
+                        <td>
+                            <%= product.price %> €
+                        </td>
+                        <td>
+                            <%= product.price * product.quantity %> €
+                        </td>
+                    </tr>
+                    <% }); %>
+            </tbody>
+        </table>
+       <div class="signature">
+        <p>Jovive.fr</p>
+    </div>
+</body>
+
+</html>

@@ -87,11 +87,7 @@ exports.getAllUsers = async (req, res) => {
       if (result === 0) return res.status(404).json([])
       const users = result.map((user) => {
         return {
-          userId: user.id,
-          lastName: user.lastName,
-          firstName: user.firstName,
-          email: user.email,
-          role: user.role,
+          ...user,
         }
       })
       res.status(200).json(users)
@@ -148,7 +144,14 @@ exports.logout = (req, res, next) => {
 // to edit an user
 exports.editUser = (req, res, next) => {
   if (req.auth.role === 'admin' || req.body.userId == req.auth.userId) {
-    const userData = { ...req.body }
+    console.log(req.auth)
+    console.log(req.body)
+    const userData = {
+      phoneNumber: req.body.phoneNumber,
+      address: req.body.address,
+      zipCode: req.body.zipCode,
+      city: req.body.city,
+    }
     dbConnection.query(
       'UPDATE users SET ? WHERE id = ?',
       [userData, req.params.id],
@@ -201,6 +204,31 @@ exports.getShippingAddress = (req, res, next) => {
   }
 }
 
+exports.deleteShippingAddress = (req, res, next) => {
+  console.log(req.body)
+  if (req.auth.role === 'admin' || req.auth.userId) {
+    dbConnection.query(
+      'SELECT * FROM shipping_address WHERE id = ?',
+      req.params.id,
+      (err, result) => {
+        if (err) return res.status(500).json(err)
+        else {
+          dbConnection.query(
+            'DELETE FROM shipping_address WHERE id = ?',
+            req.params.id,
+            (err, result) => {
+              if (err) return res.status(500).json(err)
+              res.status(200).json({ message: 'Product deleted !' })
+            }
+          )
+        }
+      }
+    )
+  } else {
+    res.status(401).json({ message: 'Not authorized' })
+  }
+}
+
 exports.getAllAddress = async (req, res) => {
   dbConnection.query('SELECT * FROM shipping_address', (err, result) => {
     if (err) return res.status(500).json(err)
@@ -213,24 +241,3 @@ exports.getAllAddress = async (req, res) => {
     res.status(200).json(data)
   })
 }
-
-// not active yet because we must implement to delete all posts and comments user
-
-// exports.deleteUser = (req, res, next) => {
-//   User.findOne({ _id: req.params.id }).then((user) => {
-//     const filename = user.picture.split('/images')[1]
-//     fs.unlink(`images/${filename}`, () => {
-//       User.deleteOne({ _id: req.params.id })
-//         .then(() => {
-//           res
-//             .status(200)
-//             .json({ message: "User and user's data has been delete" })
-//         })
-//         .catch((error) => res.status(400).json({ error }))
-//     })
-//     // }
-//     if (!user) {
-//       res.status(404).json({ message: 'No user to delete' })
-//     }
-//   })
-// }

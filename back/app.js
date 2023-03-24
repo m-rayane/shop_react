@@ -22,6 +22,7 @@ const apiRoute = '/api'
 const productRoutes = require('./routes/product')
 const userRoutes = require('./routes/user')
 const orderRoutes = require('./routes/order')
+const emailRoutes = require('./routes/email')
 
 const app = express()
 
@@ -41,6 +42,7 @@ app.use(express.json())
 app.use('/api', userRoutes)
 app.use('/api', productRoutes)
 app.use('/api', orderRoutes)
+app.use('/api', emailRoutes)
 app.use('/images', express.static(path.join(__dirname, 'images')))
 
 module.exports = app
