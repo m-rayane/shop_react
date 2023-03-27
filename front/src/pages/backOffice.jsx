@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import '../utils/styles/account.scss'
 
@@ -31,6 +32,8 @@ export default function BackOffice() {
   const [category, setCategory] = useState('')
   const [customerId, setCustomerId] = useState()
   const [customerData, setCustomerData] = useState()
+
+  const navigate = useNavigate()
 
   useEffect(() => {
     setCategory(targetCategory)
@@ -77,74 +80,86 @@ export default function BackOffice() {
 
   return (
     <>
-      {!userData.id && <Login />}
-      {userData.id && (
+      {userData.role !== 'admin' ? (
+        navigate('/compte', { replace: true })
+      ) : (
         <>
-          <div className="account">
-            <div className="account__main">
-              <nav className="account__main__nav">
-                <ul>
-                  <li
-                    className="account__main__nav__adminBoard"
-                    onClick={() => handleShowSection('dashboard')}
-                  >
-                    Tabeau de bord
-                  </li>
-                  <li
-                    className="account__main__nav__orders"
-                    onClick={() => handleShowSection('orders')}
-                  >
-                    Commandes
-                  </li>
-                  <li
-                    className="account__main__nav__products"
-                    onClick={() => handleShowSection('products')}
-                  >
-                    Produits
-                  </li>
-                  <li
-                    className="account__main__nav__customers"
-                    onClick={() => {
-                      handleShowSection('customers')
-                      setCustomerId('')
-                      setCustomerData('')
-                    }}
-                  >
-                    Comptes client
-                  </li>
-                  <Logout
-                    name="logout"
-                    className="account__logout"
-                    origin="back-office"
-                  />
-                </ul>
-              </nav>
-              <div className="account__main__content">
-                {showSection === 'dashboard' && (
-                  <DashBoardAdmin
-                    className={'account__main__content__dashBoard'}
-                    userData={userData}
-                    orders={ordersByUser}
-                  />
-                )}
-                {showSection === 'customers' && (
-                  <Customers
-                    className={'account__main__content__customers'}
-                    customerData={customerData}
-                    customerId={customerId}
-                    setCustomerData={setCustomerData}
-                    setCustomerId={setCustomerId}
-                  />
-                )}
-                {showSection === 'orders' && (
-                  <AllOrders className={'account__main__content__allOrders'} />
-                )}
-                {showSection === 'products' && (
-                  <Products className={'account__main__content__products'} />
-                )}
+          {!userData.id && <Login />}
+          {userData.id && (
+            <>
+              <div className="account">
+                <div className="account__main">
+                  <div className="account__main__nav">
+                    <nav className="">
+                      <ul>
+                        <li
+                          className="account__main__nav__adminBoard"
+                          onClick={() => handleShowSection('dashboard')}
+                        >
+                          Tabeau de bord
+                        </li>
+                        <li
+                          className="account__main__nav__orders"
+                          onClick={() => handleShowSection('orders')}
+                        >
+                          Commandes
+                        </li>
+                        <li
+                          className="account__main__nav__products"
+                          onClick={() => handleShowSection('products')}
+                        >
+                          Produits
+                        </li>
+                        <li
+                          className="account__main__nav__customers"
+                          onClick={() => {
+                            handleShowSection('customers')
+                            setCustomerId('')
+                            setCustomerData('')
+                          }}
+                        >
+                          Comptes client
+                        </li>
+                      </ul>
+                    </nav>
+                    <Logout
+                      name="logout"
+                      className="account__logout"
+                      origin="back-office"
+                    />
+                  </div>
+                  <div className="account__main__content">
+                    {showSection === 'dashboard' && (
+                      <DashBoardAdmin
+                        className={'account__main__content__dashBoard'}
+                        userData={userData}
+                        orders={ordersByUser}
+                      />
+                    )}
+                    {showSection === 'customers' && (
+                      <Customers
+                        className={'account__main__content__customers'}
+                        customerData={customerData}
+                        customerId={customerId}
+                        setCustomerData={setCustomerData}
+                        setCustomerId={setCustomerId}
+                      />
+                    )}
+                    {showSection === 'orders' && (
+                      <AllOrders
+                        className={'account__main__content__allOrders'}
+                      />
+                    )}
+                    {showSection === 'products' && (
+                      <Products
+                        className={'account__main__content__products'}
+                      />
+                    )}
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            </>
+          )}
         </>
       )}
     </>

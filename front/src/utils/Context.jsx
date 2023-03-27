@@ -22,6 +22,7 @@ export const ContextProvider = ({ children }) => {
   const userId = localStorage.getItem('userId')
   const expirationDate = localStorage.getItem('expirationDate')
   const userRole = localStorage.getItem('role')
+  const [userLS, setUserLS] = useState()
   const [isLoading, setIsLoading] = useState(true)
   const [targetProduct, setTargetProduct] = useState('')
   const [targetCategory, setTargetCategory] = useState('')
@@ -63,7 +64,22 @@ export const ContextProvider = ({ children }) => {
       }
       getUser()
     }
-  }, [userId])
+  }, [])
+
+  useEffect(() => {
+    const data = JSON.parse(localStorage.getItem('cart'))
+    setCartData(data)
+  }, [setCartData])
+
+  useEffect(() => {
+    let totalQuantity = 0
+    if (cartData) {
+      for (let i = 0; i < cartData.length; i++) {
+        totalQuantity += cartData[i].quantity
+      }
+      setTotalQuantity(totalQuantity)
+    }
+  }, [cartData])
 
   // to get ALL users data
   useEffect(() => {
@@ -167,16 +183,6 @@ export const ContextProvider = ({ children }) => {
     }
   }, [userId])
 
-  useEffect(() => {
-    let totalQuantity = 0
-    if (cartData) {
-      for (let i = 0; i < cartData.length; i++) {
-        totalQuantity += cartData[i].quantity
-      }
-      setTotalQuantity(totalQuantity)
-    }
-  }, [cartData])
-
   // functions for re-rendering on every new api call
   const getProducts = async () => {
     const reRender = async () => {
@@ -268,6 +274,33 @@ export const ContextProvider = ({ children }) => {
     }
   }
 
+  const getUserLS = async () => {
+    if (userId) {
+      const reRender = async () => {
+        const userLSData = {
+          userId: localStorage.getItem('userId'),
+          expirationDate: localStorage.getItem('expirationDate'),
+          userRole: localStorage.getItem('role'),
+        }
+        setUserLS(userLSData)
+      }
+      reRender()
+    }
+  }
+
+  const getTotalQuantity = async () => {
+    const reRender = async () => {
+      let totalQuantity = 0
+      if (cartData) {
+        for (let i = 0; i < cartData.length; i++) {
+          totalQuantity += cartData[i].quantity
+        }
+        setTotalQuantity(totalQuantity)
+      }
+    }
+    reRender()
+  }
+
   return (
     <Context.Provider
       value={{
@@ -294,6 +327,7 @@ export const ContextProvider = ({ children }) => {
         selectedShippingAddress,
         cartData,
         totalQuantity,
+        userLS,
         getProducts,
         getReview,
         getUser,
@@ -314,6 +348,8 @@ export const ContextProvider = ({ children }) => {
         setSelectedShippingAddress,
         setCartData,
         setTotalQuantity,
+        getUserLS,
+        getTotalQuantity,
       }}
     >
       {children}

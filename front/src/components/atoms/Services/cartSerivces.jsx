@@ -21,6 +21,7 @@ export const addToCart = (productId, quantity) => {
     productInCart.quantity += parseInt(quantity)
   }
   saveCartLS(cart)
+  return cart
 }
 
 export const updateCart = (productId, newQuantity) => {
@@ -32,12 +33,12 @@ export const updateCart = (productId, newQuantity) => {
     }
   }
   saveCartLS(cart)
-  window.location.reload()
+  return cart
 }
 
 export const deleteProduct = (productId) => {
-  const cart = getCart()
+  let cart = getCart()
   const newCart = cart.filter((item) => item.productId !== productId)
   saveCartLS(newCart)
-  window.location.reload()
+  return newCart
 }

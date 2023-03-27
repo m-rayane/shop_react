@@ -57,12 +57,12 @@ export default function Shop({ id, name, addToCart }) {
           {showAddProductForm && <AddProduct />}
           {!showAddProductForm && (
             <>
-              <div className="shop__content__filter">
+              {/* <div className="shop__content__filter">
                 <Filter
                   productsData={productsData}
                   setFilteredProducts={setFilteredProducts}
                 />
-              </div>
+              </div> */}
               <div className="shop__content__nav">
                 <nav className="shop__content__nav__link">
                   <Link

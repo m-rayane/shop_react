@@ -67,25 +67,25 @@
     ],
         "billing":[
     {
-      "category": "shippingPhoneNumber",
+      "category": "billingPhoneNumber",
       "name": "Numéro de téléphone",
       "message": "Le numéro de téléphone",
       "key": "phoneNumber"
     },
     {
-      "category": "shippingAddress",
+      "category": "billingAddress",
       "name": "Adresse",
       "message": "L'adresse",
       "key": "address"
     },
     {
-      "category": "shippingZipCode",
+      "category": "billingZipCode",
       "name": "Code postale",
       "message": "Le code postale",
       "key": "zipCode"
     },
     {
-      "category": "shippingCity",
+      "category": "billingCity",
       "name": "Ville",
       "message": "La ville",
       "key": "city"

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { Context } from '../utils/Context'
 
@@ -24,8 +25,9 @@ import { SignInForm } from '../components/molecules/signInForm'
 
 import { toLogin } from '../components/atoms/Services/authServices'
 import { toHandleTestField } from '../components/atoms/Services/accountServices'
+import { Navigate } from 'react-router-dom'
 
-const Cart = () => {
+export default function Cart() {
   const {
     productsData,
     userData,
@@ -49,7 +51,10 @@ const Cart = () => {
   const [isValidated, setIsValidated] = useState(false)
   const [isLogin, setIsLogin] = useState(false)
   const [isCreatingAnAccount, setIsCreatingAnAccount] = useState(false)
+  const [error, setError] = useState('')
   const [errorBtn, setErrorBtn] = useState('')
+
+  const navigate = useNavigate()
 
   const selectedAddress = shippingAddress.find(
     (address) => address.id === targetAddress
@@ -125,10 +130,10 @@ const Cart = () => {
       const emailValue = e.target['signUpEmail'].value
       const passwordValue = e.target['signUpPassword'].value
       const confirmPasswordValue = e.target['confirmPassword'].value
-      const addressValue = e.target['address'].value
-      const zipCodeValue = e.target['zipCode'].value
-      const cityValue = e.target['city'].value
-      const phoneValue = e.target['phoneNumber'].value
+      const addressValue = e.target['billingAddress'].value
+      const zipCodeValue = e.target['billingZipCode'].value
+      const cityValue = e.target['billingCity'].value
+      const phoneValue = e.target['billingPhoneNumber'].value
 
       const firstNameTest = regexName.test(firstNameValue)
       const lastNameTest = regexName.test(lastNameValue)
@@ -285,6 +290,8 @@ const Cart = () => {
           emailServices.sendEmail(emailDataAdmin),
           emailServices.sendEmail(emailDataClient),
         ])
+        localStorage.removeItem('cart')
+        navigate(`/confirmation/${response.data.orderId}`, { replace: true })
       } catch (error) {
         console.error(error)
       }
@@ -295,8 +302,7 @@ const Cart = () => {
 
   //to submit login
   const handleLogin = async (e) => {
-    toLogin(e, 'cart')
-    getShippingAddress()
+    toLogin(e, setError, 'panier')
   }
 
   const handleTestFields = () => {
@@ -310,9 +316,11 @@ const Cart = () => {
     )
   }
 
+  console.log(cartData)
+
   return (
     <div className="cart">
-      {!cartData ? (
+      {!cartData || totalQuantity === 0 ? (
         <h1>Votre panier est vide.</h1>
       ) : (
         <>
@@ -322,7 +330,7 @@ const Cart = () => {
                 className="cart__leftSection__cartDetails"
                 cartData={cartData}
                 setTotalPrice={setTotalPrice}
-                totalQuantity={totalQuantity}
+                origin="cart"
               />
             )}
             {isValidated && cartData && (
@@ -331,6 +339,7 @@ const Cart = () => {
                   className="cart__leftSection__cartDetails"
                   cartData={cartData}
                   setTotalPrice={setTotalPrice}
+                  origin="cart"
                 />
 
                 {userData.id ? (
@@ -393,6 +402,11 @@ const Cart = () => {
                         <form onSubmit={handleLogin} className="">
                           <SignInForm />
                           <button>Se connecter</button>
+                          <div className="auth__content__message">
+                            <div className="auth__content__message__error">
+                              {error}
+                            </div>
+                          </div>
                         </form>
                       </div>
                     )}
@@ -407,8 +421,9 @@ const Cart = () => {
                 className="cart__rightSection__summary"
                 totalPrice={totalPrice}
                 isValidated={isValidated}
-                handleCartSubmit={handleCartSubmit}
+                handleCartSubmit={() => setIsValidated(true)}
                 handleOrderSubmit={handleOrderSubmit}
+                origin="cart"
               />
             )}
           </section>
@@ -417,5 +432,3 @@ const Cart = () => {
     </div>
   )
 }
-
-export default Cart

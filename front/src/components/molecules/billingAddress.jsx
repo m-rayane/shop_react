@@ -17,6 +17,7 @@ export const BillingAddress = ({
         </h4>
         {!userData.address && (
           <>
+            <p>Vous n'avez pas encore enregistré une addresse de facturation</p>
             <form
               className={`${className}__addBillingForm`}
               onSubmit={onSubmitBillingAddress}
@@ -33,10 +34,10 @@ export const BillingAddress = ({
         )}
         {userData.address && (
           <>
-            <p className={`${className}__billingAddress`}>{userData.address}</p>
+            <p>{userData.address}</p>
             <p>{userData.zipCode}</p>
             <p>{userData.city}</p>
-            <p className={`${className}`}>{userData.phoneNumber}</p>
+            <p>{userData.phoneNumber}</p>
           </>
         )}
       </div>

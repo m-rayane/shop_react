@@ -144,8 +144,6 @@ exports.logout = (req, res, next) => {
 // to edit an user
 exports.editUser = (req, res, next) => {
   if (req.auth.role === 'admin' || req.body.userId == req.auth.userId) {
-    console.log(req.auth)
-    console.log(req.body)
     const userData = {
       phoneNumber: req.body.phoneNumber,
       address: req.body.address,

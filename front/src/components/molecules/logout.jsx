@@ -23,6 +23,7 @@ export default function Logout({ className, name, origin }) {
     try {
       localStorage.removeItem('userId')
       localStorage.removeItem('expirationDate')
+      localStorage.removeItem('role')
       setConfirmLogout('')
       window.location.reload()
       await userServices.logoutUser()

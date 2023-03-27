@@ -2,7 +2,7 @@ import UserService from '../../../api/Services/UserServices'
 
 const userServices = new UserService()
 
-export const toLogin = async (e, setError) => {
+export const toLogin = async (e, setError, origin) => {
   e.preventDefault()
   try {
     const userData = {
@@ -10,11 +10,11 @@ export const toLogin = async (e, setError) => {
       password: e.target['signInPassword'].value,
     }
     await userServices.logInUser(userData).then((response) => {
-      console.log(response.data)
       localStorage.setItem('userId', response.data.userId)
       localStorage.setItem('expirationDate', response.data.tokenExpiration)
       localStorage.setItem('role', response.data.role)
     })
+    window.location.href = `/${origin}`
   } catch (err) {
     setError('Adresse email ou mot de passe incorrecte.')
   }

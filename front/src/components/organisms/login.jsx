@@ -16,8 +16,7 @@ import { toHandleTestField } from '../atoms/Services/accountServices'
 
 export default function Login() {
   const userServices = new UserService()
-  const { getProducts, targetCategory, usersEmails, getExpirationDate } =
-    useContext(Context)
+  const { getProducts, targetCategory, usersEmails } = useContext(Context)
   const navigate = useNavigate()
 
   const [error, setError] = useState('')
@@ -100,6 +99,8 @@ export default function Login() {
               'expirationDate',
               response.data.tokenExpiration
             )
+            localStorage.setItem('role', response.data.role)
+            window.location.reload()
           })
           navigate('/', { replace: true })
         }
@@ -109,8 +110,7 @@ export default function Login() {
 
   //to submit login
   const handleLogin = async (e) => {
-    toLogin(e, setError)
-    window.location.reload()
+    toLogin(e, setError, 'compte')
   }
 
   const handleSignInModal = async () => {

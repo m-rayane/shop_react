@@ -13,19 +13,9 @@ import { BackOfficeSvg } from '../atoms/svg/backOffice'
 import { Context } from '../../utils/Context'
 
 export default function Header() {
-  const { userData, cartData, setCartData } = useContext(Context)
+  const { userData, totalQuantity } = useContext(Context)
 
-  let totalQuantity = 0
-  if (cartData) {
-    for (let i = 0; i < cartData.length; i++) {
-      totalQuantity += cartData[i].quantity
-    }
-  }
-
-  useEffect(() => {
-    const data = JSON.parse(localStorage.getItem('cart'))
-    setCartData(data)
-  }, [setCartData])
+  console.log(totalQuantity)
 
   return (
     <header className="header">
@@ -42,7 +32,11 @@ export default function Header() {
           <div className="header__nav__cartSvg">
             <CartSvg />
           </div>
-          <div className="header__nav__cartSvg__cartQty">{totalQuantity}</div>
+          {totalQuantity && totalQuantity > 0 ? (
+            <div className="header__nav__cartSvg__cartQty">{totalQuantity}</div>
+          ) : (
+            ''
+          )}
         </Link>
         <Link to="" style={{ textDecoration: 'none', color: 'white' }}>
           <div className="header__nav__contactSvg">

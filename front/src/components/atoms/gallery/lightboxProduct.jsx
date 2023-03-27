@@ -13,9 +13,6 @@ export const LightboxProduct = ({ model, type }) => {
     initLightboxJS('288F-0339-D747-BAA6', 'team')
   }, [])
 
-  console.log(videos[model])
-  console.log(imagesUrl[model])
-
   return (
     <>
       {imagesUrl[model] && type === 'images' && (
@@ -30,7 +27,7 @@ export const LightboxProduct = ({ model, type }) => {
         ></ImageSlider>
       )}
 
-      {videos && type === 'videos' && (
+      {/* {videos && type === 'videos' && (
         <ImageSlider
           className="container grid grid-cols-3 gap-2 mx-auto"
           showVideoInLightbox={false}
@@ -41,7 +38,7 @@ export const LightboxProduct = ({ model, type }) => {
           width="100vw"
           thumbnailHeight="14vw"
         ></ImageSlider>
-      )}
+      )} */}
     </>
   )
 }

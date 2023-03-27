@@ -13,8 +13,9 @@ import { Rating } from '../components/atoms/rating'
 import { LightboxProduct } from '../components/atoms/gallery/lightboxProduct'
 import { imagesUrl } from '../api/Datas/photos'
 
-const Product = () => {
-  const { productsData } = useContext(Context)
+export default function Product() {
+  const { productsData, getTotalQuantity, totalQuantity, setCartData } =
+    useContext(Context)
   const { category, id } = useParams()
   const [productData, setProductData] = useState()
   const [quantity, setQuantity] = useState(1)
@@ -31,8 +32,11 @@ const Product = () => {
   }, [id, productsData])
 
   const handleAddToCart = () => {
-    addToCart(productData._id, quantity)
+    const cart = addToCart(productData._id, quantity)
+    setCartData(cart)
   }
+
+  console.log(totalQuantity)
 
   const categoryText = `${category
     .replace(/-/g, ' ')
@@ -133,5 +137,3 @@ const Product = () => {
     </>
   )
 }
-
-export default Product

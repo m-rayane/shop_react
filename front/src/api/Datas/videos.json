@@ -14,7 +14,12 @@
     "type": "yt", 
     "videoID" :"CzicVzDhKGg",
     "thumbnail": "https://img.youtube.com/vi/CzicVzDhKGg/hqdefault.jpg"
+  },
+  { 
+    "src": "https://images.pexels.com/photos/315191/pexels-photo-315191.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", 
+    "alt": "City night"
   }
+
     ],
     "chest":[
   { 

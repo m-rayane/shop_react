@@ -5,21 +5,24 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Context } from '../../utils/Context'
 import { updateCart, deleteProduct } from '../atoms/Services/cartSerivces'
 
-const CartDetails = ({ className, cartData, setTotalPrice, totalQuantity }) => {
-  const { productsData } = useContext(Context)
+const CartDetails = ({ className, cartData, setTotalPrice, origin }) => {
+  const { productsData, totalQuantity, getTotalQuantity, setCartData } =
+    useContext(Context)
 
   useEffect(() => {
-    let totalPrice = 0
-    if (cartData) {
-      cartData.forEach((item) => {
-        const productData = productsData.find((p) => p._id === item.productId)
-        if (productData) {
-          totalPrice += productData._price * item.quantity
-        }
-      })
+    if (origin === 'cart') {
+      let totalPrice = 0
+      if (cartData) {
+        cartData.forEach((item) => {
+          const productData = productsData.find((p) => p._id === item.productId)
+          if (productData) {
+            totalPrice += productData._price * item.quantity
+          }
+        })
+      }
+      setTotalPrice(totalPrice)
     }
-    setTotalPrice(totalPrice)
-  }, [cartData, productsData, setTotalPrice])
+  }, [cartData, productsData, setTotalPrice, origin])
 
   const linkStyle = {
     color: 'inherit',
@@ -27,14 +30,16 @@ const CartDetails = ({ className, cartData, setTotalPrice, totalQuantity }) => {
   }
 
   return (
-    <>
+    <div className={className}>
       <h2>
         Détail de votre panier{' '}
-        <span>{`(${totalQuantity} article${
-          totalQuantity > 1 ? `s` : ``
-        })`}</span>
+        {totalQuantity && (
+          <span>{`(${totalQuantity} article${
+            totalQuantity > 1 ? `s` : ``
+          })`}</span>
+        )}
       </h2>
-      <ul className={className}>
+      <ul className={`${className}__list`}>
         {cartData &&
           cartData.map((item) => {
             const productData = productsData.find(
@@ -45,7 +50,13 @@ const CartDetails = ({ className, cartData, setTotalPrice, totalQuantity }) => {
               model = productData._model.toLowerCase()
             }
             const handleChangeQuantity = (e) => {
-              updateCart(item.productId, e.target.value)
+              const newQuantity = updateCart(item.productId, e.target.value)
+              setCartData(newQuantity)
+            }
+
+            const handleDeleteProduct = (id) => {
+              const newQuantity = deleteProduct(id)
+              setCartData(newQuantity)
             }
             return (
               <li className={`${className}__product`} key={item.productId}>
@@ -79,25 +90,29 @@ const CartDetails = ({ className, cartData, setTotalPrice, totalQuantity }) => {
                           <p>{productData._price * item.quantity},00€</p>
                         </div>
                       </div>
-                      <div className={`${className}__product__content__footer`}>
+                      {origin === 'cart' && (
                         <div
-                          className={`${className}__product__content__footer__delete`}
-                          onClick={() => deleteProduct(item.productId)}
+                          className={`${className}__product__content__footer`}
                         >
-                          Supprimer
+                          <div
+                            className={`${className}__product__content__footer__delete`}
+                            onClick={() => handleDeleteProduct(item.productId)}
+                          >
+                            Supprimer
+                          </div>
+                          <div
+                            className={`${className}__product__content__footer__quantity`}
+                          >
+                            <input
+                              type="number"
+                              value={item.quantity}
+                              onChange={handleChangeQuantity}
+                              min="1"
+                              max="100"
+                            />
+                          </div>
                         </div>
-                        <div
-                          className={`${className}__product__content__footer__quantity`}
-                        >
-                          <input
-                            type="number"
-                            value={item.quantity}
-                            onChange={handleChangeQuantity}
-                            min="1"
-                            max="100"
-                          />
-                        </div>
-                      </div>
+                      )}
                     </div>
                   </>
                 )}
@@ -105,7 +120,7 @@ const CartDetails = ({ className, cartData, setTotalPrice, totalQuantity }) => {
             )
           })}
       </ul>
-    </>
+    </div>
   )
 }
 

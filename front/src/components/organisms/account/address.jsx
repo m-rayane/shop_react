@@ -69,6 +69,7 @@ export default function Address({
         onSubmitShippingAddress={onSubmitShippingAddress}
         errorMsg={errorMsg}
         shippingAddress={shippingAddress}
+        origin="account"
       />
     </>
   )
