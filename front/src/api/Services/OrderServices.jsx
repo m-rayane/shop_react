@@ -15,6 +15,18 @@ export default class OrderService {
     return await postRequest('/orders', data)
   }
 
+  async payment(data) {
+    return await postRequest('/payments', data)
+  }
+
+  async paymentIntent(data) {
+    return await postRequest('/paymentIntents', data)
+  }
+
+  async postShippingCosts(data) {
+    return await postRequest('/shippingCosts', data)
+  }
+
   // get request
 
   async getAllOrders() {
@@ -39,6 +51,12 @@ export default class OrderService {
     const req = await getRequest('/orders/' + orderId + '/detailsByOrder')
     const res = req.data
     return res.map((data) => new OrderDetail(data))
+  }
+
+  async getShippingCosts() {
+    const req = await getRequest('/shippingCosts')
+    const res = req.data
+    return res
   }
 
   // put request

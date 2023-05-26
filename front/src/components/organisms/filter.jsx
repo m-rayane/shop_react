@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react'
 
-export const Filter = ({ classeName, productsData, setFilteredProducts }) => {
+export default function Filter({
+  classeName,
+  productsData,
+  setFilteredProducts,
+}) {
   const [searchTerm, setSearchTerm] = useState('')
   const [minPrice, setMinPrice] = useState(0)
   const [minRating, setMinRating] = useState(0)

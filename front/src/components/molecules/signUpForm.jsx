@@ -10,6 +10,7 @@ export const SignUpForm = ({
   handleEmailChange,
   isCreating,
   handleBlur,
+  defaultValue,
 }) => {
   const { setTargetCategory, accountCategories } = useContext(Context)
   return (
@@ -28,6 +29,7 @@ export const SignUpForm = ({
           )
         }
         placeholder="Prénom*"
+        defaultValue={defaultValue ? defaultValue.lastName : ''}
       />
       <FormField
         name="lastName"
@@ -41,12 +43,13 @@ export const SignUpForm = ({
           )
         }
         placeholder="Nom*"
+        defaultValue={defaultValue ? defaultValue.firstName : ''}
       />
       <FormField
         name="signUpEmail"
         className={className + '__fields__field'}
         type="email"
-        onChange={handleEmailChange}
+        onChange={handleChange}
         onBlur={handleBlur}
         onFocus={() =>
           setTargetCategory(
@@ -54,6 +57,7 @@ export const SignUpForm = ({
           )
         }
         placeholder="Adresse email*"
+        defaultValue={defaultValue ? defaultValue.email : ''}
       />
       {isCreating && (
         <>

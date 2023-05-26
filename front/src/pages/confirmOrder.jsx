@@ -16,6 +16,8 @@ export default function ConfirmOrder() {
     ordersByUser,
     getOrdersByUser,
     productsData,
+    selectedShippingAddress,
+    setCartData,
   } = useContext(Context)
   const [order, setOrder] = useState()
   const [totalPrice, setTotalPrice] = useState(0)
@@ -25,14 +27,12 @@ export default function ConfirmOrder() {
     getOrderDetailByOrder(orderId)
     getOrdersByUser(userData.id)
     setOrder(ordersByUser.find((o) => o._id === orderId))
-  }, [])
-
-  const cartData = orderDetailByOrder
+  }, [orderId, ordersByUser, userData])
 
   useEffect(() => {
     let totalPrice = 0
-    if (cartData) {
-      cartData.forEach((item) => {
+    if (orderDetailByOrder) {
+      orderDetailByOrder.forEach((item) => {
         const productData = productsData.find((p) => p._id === item.productId)
         if (productData) {
           totalPrice += productData._price * item.quantity
@@ -40,16 +40,16 @@ export default function ConfirmOrder() {
       })
     }
     setTotalPrice(totalPrice)
-  }, [cartData, productsData])
+  }, [orderDetailByOrder, productsData])
 
   return (
     <div className="confirmOrder">
-      <h1>{`Confirmation de commande n°${orderId}`}</h1>
+      <h1>{`Bravo ! Votre commande n°${orderId} est confirmée`}</h1>
       <section className="confirmOrder__info">
         <div className="confirmOrder__info__cart">
           <CartDetails
             className="confirmOrder__info__cart__cartDetails"
-            cartData={cartData}
+            cartData={orderDetailByOrder}
           />
         </div>
         <Summary
@@ -57,20 +57,31 @@ export default function ConfirmOrder() {
           totalPrice={totalPrice}
         />
       </section>
-      <section class="shipping-info">
+      <section className="confirmOrder__shippingInfo">
         <h2>Adresse de livraison</h2>
         {order && (
-          <>
-            <p>{order._shippingName}</p>
-            <p>{order._shippingAddress}</p>
-            <p>0{order._shippingPhone}</p>
-          </>
+          <div className="confirmOrder__shippingInfo__address">
+            firstName: selectedShippingAddress.firstName, lastName:
+            selectedShippingAddress.lastName, phoneNumber:
+            selectedShippingAddress.phoneNumber, address:
+            selectedShippingAddress.address, zipCode:
+            selectedShippingAddress.zipCode, city: selectedShippingAddress.city,
+            <p>
+              {selectedShippingAddress.firstName}{' '}
+              {selectedShippingAddress.lastName}
+            </p>
+            <p>
+              {selectedShippingAddress.address},{' '}
+              {selectedShippingAddress.zipCode} {selectedShippingAddress.city}
+            </p>
+            <p>0{selectedShippingAddress._shippingPhone}</p>
+          </div>
         )}
       </section>
-      <section class="additional-info">
+      <section className="confirmOrder__additional">
         <h2>Informations supplémentaires</h2>
         <p>
-          Votre commande sera expédiée dans les 24 heures et vous sera livrée
+          Votre commande sera expédiée dans les 48 heures et vous sera livrée
           sous 3 à 5 jours ouvrables.
         </p>
       </section>

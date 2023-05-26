@@ -29,8 +29,8 @@ CREATE TABLE `products` (
   `id` VARCHAR(50) PRIMARY KEY,
   `createdDate` DATETIME DEFAULT CURRENT_TIMESTAMP,
   `name` VARCHAR(255) NOT NULL,
-  `description` TEXT NOT NULL,
-  `technical` TEXT NOT NULL,
+  `shortDescription` TEXT NOT NULL,
+  `description` TEXT,
   `price` FLOAT(10) NOT NULL,
   `weight` INT(10) NOT NULL,
   `brand` VARCHAR(50) NOT NULL,
@@ -38,6 +38,22 @@ CREATE TABLE `products` (
   `category` VARCHAR(50) NOT NULL,
   `stock` INT(10),
   `image` VARCHAR(255)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- --------------------------------------------------------
+--
+-- Table `product_technicals`
+--
+
+CREATE TABLE `product_technicals` (
+  `id` INT(10) PRIMARY KEY AUTO_INCREMENT,
+  `productId` VARCHAR(50) NOT NULL,
+  `technicalRank` INT(3),
+  `title` TEXT,
+  `content` TEXT NOT NULL,
+  `category` VARCHAR(50)
+
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -93,7 +109,7 @@ CREATE TABLE `orders` (
 
 -- --------------------------------------------------------
 --
--- Table `orderProduct`
+-- Table `order details`
 --
 
 CREATE TABLE `order_details` (
@@ -101,6 +117,7 @@ CREATE TABLE `order_details` (
   `orderId` VARCHAR(50) NOT NULL,
   `userId` INT(10) NOT NULL,
   `productId` VARCHAR(50) NOT NULL,
+  `option` VARCHAR(50),
   `quantity` INT(10) NOT NULL,
   `priceUnit` FLOAT(10) NOT NULL,
   `discount` INT(10)
@@ -134,6 +151,32 @@ CREATE TABLE `shippings` (
   `userId` INT(10) NOT NULL,
   `type` VARCHAR(10) NOT NULL,
   `price` FLOAT(10) NOT NULL
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+--
+-- Table `shipping_costs`
+--
+
+CREATE TABLE `shipping_costs` (
+  `id` INT(10) PRIMARY KEY AUTO_INCREMENT,
+  `company` VARCHAR(50) NOT NULL,
+  `weight` INT(10) NOT NULL,
+  `price` FLOAT(10) NOT NULL
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+--
+-- Table `contact`
+--
+
+CREATE TABLE `shippings` (
+  `id` INT(10) PRIMARY KEY AUTO_INCREMENT,
+  `userId` INT(10) NOT NULL,
+  `lastName` VARCHAR(50) NOT NULL,
+  `firstName` VARCHAR(50) NOT NULL,
+  `email` VARCHAR(100) NOT NULL,
+  `message` TEXT NOT NULL
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------

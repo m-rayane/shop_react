@@ -9,12 +9,17 @@
   flex-direction: column;
   align-items: center;
   width: 100vw;
-  margin-top: 7vh;
+  margin-top: $margin-top-page;
   &__header {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: center;
     width: 95%;
+    font-family: 'GameCube';
+    color: white;
+    padding: 1rem 0;
+    & h1 {
+      font-size: 1.5rem;
+    }
   }
   &__content {
     width: 95%;
@@ -43,11 +48,28 @@
       display: flex;
       flex-direction: column;
       width: 100%;
+      & h2 {
+        color: $tertiary-color;
+        text-decoration: none;
+        &:hover {
+          text-decoration: underline $tertiary-color;
+        }
+      }
       &__tent {
-        width: 100%;
+        margin-bottom: 0.5rem;
+        &__title {
+          padding: 0.5rem 0;
+          font-family: 'GameCube';
+          font-size: 1.2rem;
+        }
         @include productGrid;
       }
       &__accessory {
+        &__title {
+          padding: 0.5rem 0;
+          font-family: 'GameCube';
+          font-size: 1.2rem;
+        }
         @include productGrid;
       }
     }

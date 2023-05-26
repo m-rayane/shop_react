@@ -4,13 +4,14 @@
   "description": "API of the Groupomania social-network",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "https": "openssl req -x509 -newkey rsa:2048 -nodes -keyout key.pem -out cert.pem && HTTPS=true node server.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@tanstack/react-query": "^4.24.4",
-    "bcrypt": "^5.0.1",
+    "bcrypt": "^5.1.0",
     "body-parser": "^1.20.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -19,10 +20,12 @@
     "ejs": "^3.1.9",
     "express": "^4.18.1",
     "helmet": "^5.1.0",
+    "https": "^1.0.0",
     "jsonwebtoken": "^8.5.1",
     "multer": "^1.4.5-lts.1",
     "mysql2": "^3.1.2",
-    "nodemailer": "^6.9.1"
+    "nodemailer": "^6.9.1",
+    "stripe": "^12.0.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.19"

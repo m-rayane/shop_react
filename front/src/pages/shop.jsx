@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 
 import '../utils/styles/shop.scss'
 
@@ -9,16 +9,19 @@ import { Button } from '../components/atoms/form/button'
 import AddProduct from '../components/organisms/product/addProduct'
 import { ProductGrid } from '../components/organisms/product/productGrid'
 
-import { Filter } from '../components/organisms/filter'
-
 export default function Shop({ id, name, addToCart }) {
-  const { userData, productsData, getProducts } = useContext(Context)
+  const { userData, productsData } = useContext(Context)
   const [showAddProductForm, setShowAddProductForm] = useState(false)
-  const [filteredProducts, setFilteredProducts] = useState(productsData)
   const [categoryText, setCategoryText] = useState('')
   const { category } = useParams()
 
-  const navigate = useNavigate()
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'smooth',
+    })
+  }, [])
 
   useEffect(() => {
     setCategoryText('')
@@ -35,7 +38,7 @@ export default function Shop({ id, name, addToCart }) {
     <>
       <div className="shop">
         <div className="shop__header">
-          <h1>NOS PRODUITS</h1>
+          <h1>NOS TENTES DE TOIT ET ACCESSOIRES JOVIVE</h1>
           {!showAddProductForm && userData.role === 'admin' && (
             <Button
               name="addProduct"
@@ -54,7 +57,7 @@ export default function Shop({ id, name, addToCart }) {
           )}
         </div>
         <div className="shop__content">
-          {showAddProductForm && <AddProduct />}
+          {showAddProductForm && <AddProduct props={{}} />}
           {!showAddProductForm && (
             <>
               {/* <div className="shop__content__filter">
@@ -84,14 +87,15 @@ export default function Shop({ id, name, addToCart }) {
                 {(category === 'tentes-de-toit' || !category) && (
                   <>
                     <div className="shop__content__products__tent">
-                      <h2 className="shop__content__products__tent__title">
-                        Les tentes de toit
-                      </h2>
+                      <Link to={`/boutique/tentes-de-toit`}>
+                        <h2 className="shop__content__products__tent__title">
+                          les tentes de toit
+                        </h2>
+                      </Link>
                       <ProductGrid
-                        products={filteredProducts}
+                        products={productsData}
                         className="shop__content__products__tent__productGrid"
                         category="Tentes de toit"
-                        origin="shop"
                       />
                     </div>
                   </>
@@ -99,14 +103,15 @@ export default function Shop({ id, name, addToCart }) {
 
                 {(category === 'accéssoires' || !category) && (
                   <div className="shop__content__products__accessory">
-                    <h2 className="shop__content__products__accessory__title">
-                      les accéssoires
-                    </h2>
+                    <Link to={`/boutique/accéssoires`}>
+                      <h2 className="shop__content__products__accessory__title">
+                        les accessoires
+                      </h2>
+                    </Link>
                     <ProductGrid
-                      products={filteredProducts}
+                      products={productsData}
                       className="shop__content__products__accessory__productGrid"
                       category="Accéssoires"
-                      origin="shop"
                     />
                   </div>
                 )}

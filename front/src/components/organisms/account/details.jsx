@@ -6,7 +6,7 @@ import CustomerInfo from '../customerInfo'
 
 import { toHandleTestField } from '../../atoms/Services/accountServices'
 
-export default function AccountDetails({ shippingAddressChecked }) {
+export default function AccountDetails({ shippingAddressChecked, className }) {
   const {
     userData,
     errorMsg,
@@ -55,13 +55,15 @@ export default function AccountDetails({ shippingAddressChecked }) {
   ])
 
   return (
-    <div>
+    <div className={className}>
       <CustomerInfo
-        className="cart__leftSection__customerInfo"
+        className={`${className}__customerInfo`}
         userData={userData}
         errorMsg={errorMsg}
         handleBlur={handleTestFields}
         handleChange={() => setErrorMsg('')}
+        origin="account"
+        hideTitle="true"
       />
     </div>
   )

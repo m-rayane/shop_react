@@ -9,10 +9,16 @@ export default function DashBoardAdmin({ className, userData, orders }) {
       return article1.date > article2.date ? article2 : article1
     })
   }
+
+  window.scrollTo({
+    top: 0,
+    left: 0,
+    behavior: 'smooth',
+  })
   return (
     <div className={className}>
       <h2>{`TABLEAU DE BORD`}</h2>
-      <AllOrders className={`${className}__allOrders`} />
+      <AllOrders className={`${className}`} />
     </div>
   )
 }

@@ -90,5 +90,19 @@
       "message": "La ville",
       "key": "city"
     }
+  ],
+        "contact":[
+    {
+      "category": "contactPhoneNumber",
+      "name": "Numéro de téléphone",
+      "message": "Le numéro de téléphone",
+      "key": "phoneNumber"
+    },
+    {
+      "category": "contactMessage",
+      "name": "Message de contact",
+      "message": "Le message de contact",
+      "key": "message"
+    }
   ]
 }

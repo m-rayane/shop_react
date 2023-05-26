@@ -1,13 +1,18 @@
 @import './variables';
 @import './mixins';
 
-.account {
+// .backOffice {
+//   background: white;
+// }
+
+.account,
+.backOffice {
   list-style: none;
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 90vw;
-  margin: 10vh 0 5vh 0;
+  margin-top: $margin-top-page;
   & > h2 {
     text-align: center;
   }
@@ -43,8 +48,7 @@
           display: flex;
           flex-direction: column;
           align-content: center;
-          background: white;
-          box-shadow: 0px 0px 5px rgba($tertiary-color, 0.1);
+          background: rgba($tertiary-color, 0.1);
           border-radius: 3px;
           & > li {
             font-size: 1rem;
@@ -75,28 +79,132 @@
     &__content {
       display: flex;
       flex-direction: column;
+      align-items: center;
       gap: 1rem;
-
-      & > * {
-        background: white;
-        box-shadow: 0px 0px 5px rgba($tertiary-color, 0.1);
-        border-radius: 3px;
-        padding: 0.5rem;
-      }
       width: 100%;
-      @include allOrders;
+      @include orders;
       @media (max-width: 1024px) {
         width: 100%;
       }
-      &__dashBoard {
+      &__shippingCosts {
+        &__form {
+          display: flex;
+          flex-direction: column;
+          &__item {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            gap: 1rem;
+          }
+        }
+      }
+      &__dashBoard,
+      &__customers,
+      &__allOrders,
+      &__products,
+      &__orders,
+      &__details {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        & > h2 {
+          font-family: 'GameCube';
+          text-align: center;
+        }
+        & > * {
+          background: rgba($tertiary-color, 0.1);
+          border-radius: 3px;
+          padding: 0.5rem;
+        }
+        &__lastOrder {
+          &__info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            @include cartDetails;
+            @include summary;
+            &__summary {
+              position: static;
+            }
+          }
+        }
+        &__data {
+          @include customerInfo;
+        }
         width: 100%;
-        @include allOrders;
+        @include orders;
+        &__details {
+          width: 100%;
+          @include customerInfo;
+        }
+        &__productDetail {
+          &__technical {
+            &__bottom {
+              display: flex;
+              justify-content: space-between;
+              gap: 1rem;
+              width: 100%;
+              &__content {
+              }
+            }
+          }
+        }
+      }
+      &__orders {
+        &__table {
+          @include cartDetails;
+        }
+      }
+      &__products {
+        &__addProduct,
+        &__editedProduct {
+          width: 100%;
+          &__technicalForm,
+          &__optionForm {
+            display: flex;
+            flex-direction: column;
+            &__header {
+              display: flex;
+              gap: 1rem;
+              & .field {
+                flex-direction: row;
+                align-items: center;
+                gap: 0.5rem;
+              }
+            }
+            &__textField {
+              display: flex;
+              flex-direction: column;
+            }
+          }
+        }
+        &__list {
+          &__table {
+            & > table {
+              width: 100%;
+            }
+          }
+        }
+        & img {
+          width: 50vw;
+          object-fit: contain;
+          border: 1px solid $tertiary-color;
+          box-shadow: 2px 2px 5px $tertiary-color;
+        }
+      }
+      &__details {
+        @include customerInfo;
       }
     }
   }
   &__logout {
     display: flex;
     justify-content: flex-end;
+    & .confirmBox {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
     &__layout {
       z-index: 9;
       position: absolute;

@@ -1,0 +1,25 @@
+@import './variables';
+@import './mixins';
+
+.contact {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  width: 50%;
+  margin-top: $margin-top-page;
+  & > h1 {
+    font-family: 'GameCube';
+    color: white;
+  }
+  &__form {
+    & label {
+    }
+    &__message {
+      font-size: 14px;
+      font-style: italic;
+      text-align: right;
+      padding-top: 0.3rem;
+    }
+  }
+}

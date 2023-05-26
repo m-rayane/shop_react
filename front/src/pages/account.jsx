@@ -6,9 +6,8 @@ import '../utils/styles/account.scss'
 import Login from '../components/organisms/login'
 import Logout from '../components/molecules/logout'
 import DashBoard from '../components/organisms/account/dashboard'
-import Address from '../components/organisms/account/address'
 import AccountDetails from '../components/organisms/account/details'
-import OrdersByUser from '../components/organisms/account/ordersByUser'
+import Orders from '../components/organisms/account/orders'
 import {
   toAddShippingAddress,
   toHandleTestField,
@@ -20,7 +19,7 @@ export default function Account() {
   const {
     userData,
     ordersByUser,
-    shippingAddress,
+    getOrderDetailByOrder,
     getShippingAddress,
     targetCategory,
     accountCategories,
@@ -72,7 +71,6 @@ export default function Account() {
     )
   }
 
-  console.log(userData)
   return (
     <>
       {userData.role === 'admin' ? (
@@ -95,7 +93,10 @@ export default function Account() {
                         </li>
                         <li
                           className="account__main__nav__orderList"
-                          onClick={() => setShowSection('orderList')}
+                          onClick={() => {
+                            setShowSection('orderList')
+                            setShowDetails(false)
+                          }}
                         >
                           Commandes
                         </li>
@@ -110,14 +111,14 @@ export default function Account() {
                     <Logout
                       name="logout"
                       className="account__logout"
-                      origin="account"
+                      origin="compte"
                     />
                   </div>
                   <div className="account__main__content">
                     {showSection === 'dashboard' && (
                       <DashBoard
                         userData={userData}
-                        className="account__dashboard"
+                        className="account__main__content__dashBoard"
                         onSubmitBillingAddress={handleAddBillingAddress}
                         onSubmitShippingAddress={handleAddShippingAddress}
                         errorMsg={errorMsg}
@@ -127,15 +128,19 @@ export default function Account() {
                       />
                     )}
                     {showSection === 'orderList' && (
-                      <OrdersByUser
+                      <Orders
                         userData={userData}
                         orders={ordersByUser}
                         setShowDetails={setShowDetails}
                         showDetails={showDetails}
+                        className={'account__main__content__orders'}
                       />
                     )}
                     {showSection === 'accountDetails' && (
-                      <AccountDetails userData={userData} />
+                      <AccountDetails
+                        userData={userData}
+                        className={'account__main__content__details'}
+                      />
                     )}
                   </div>
                 </div>

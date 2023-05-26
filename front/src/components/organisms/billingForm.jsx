@@ -6,32 +6,40 @@ import { FormField } from '../atoms/form/formField'
 
 import { Context } from '../../utils/Context'
 
-const BillingForm = ({
+export default function BillingForm({
   isCreating,
   handleChange,
   className,
   handleAddressFormChange,
   handleBlur,
-}) => {
+}) {
   const { accountCategories } = useContext(Context)
   return (
     <>
       {' '}
       <h2>Détails de facturation</h2>
-      <SignUpForm isCreating={isCreating} handleBlur={handleBlur} />
+      <SignUpForm
+        handleChange={handleChange}
+        isCreating={isCreating}
+        handleBlur={handleBlur}
+        className={`${className}__SignUpForm`}
+        defaultValue={{}}
+      />
       <AddressForm
         categories={accountCategories.billing}
         handleBlur={handleBlur}
-        handleChange={handleAddressFormChange}
+        handleChange={handleChange}
+        className={`${className}__addressForm`}
       />
-      <FormField
-        type="checkbox"
-        name="createAnAccount"
-        onChange={handleChange}
-      />{' '}
-      Créer un compte ?
+      {/* <div className={`${className}__addressForm__createAccount`}>
+        <FormField
+          className={`${className}__addressForm__createAccount__checkBox`}
+          type="checkbox"
+          name="createAnAccount"
+          onChange={handleChange}
+        />
+        <p>Créer un compte ?</p>
+      </div> */}
     </>
   )
 }
-
-export default BillingForm

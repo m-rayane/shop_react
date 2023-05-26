@@ -69,6 +69,12 @@ export default class UserService {
     return res
   }
 
+  async editShippingAddress(id) {
+    const req = await putRequest('/shipping_address/' + id)
+    const res = req.data
+    return res
+  }
+
   async deleteShippingAddress(id) {
     const req = await deleteRequest('/shipping_address/' + id)
     const res = req.data

@@ -3,26 +3,69 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Nouvelle commande</title>
+    <title>Commande livrée</title>
     <style>
-        /* Styles CSS pour le corps de l'email */
         body {
             font-family: Arial, sans-serif;
             font-size: 14px;
+            line-height: 1.5;
+            color: #333;
+            background-color: #f6f6f6;
+            margin: 0;
+            padding: 0;
+        }
+    
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+    
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            margin-top: 0;
+            font-weight: bold;
             color: #333;
         }
-
-        /* Styles CSS pour la signature avec le logo */
-        .signature {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid #ccc;
-            text-align: center;
+    
+        p {
+            margin-top: 0;
+            margin-bottom: 1rem;
         }
-
-        .logo {
-            max-width: 150px;
-            height: auto;
+    
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+    
+        table td,
+        table th {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+    
+        table th {
+            background-color: #f6f6f6;
+            font-weight: bold;
+            text-align: left;
+        }
+    
+        .btn {
+            display: inline-block;
+            background-color: #547944;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -31,58 +74,58 @@
     <h1>
         <%= title %>
     </h1>
+    <p>Bonjour <%= customerFirstName %>
+            <%= customerLastName %>,</p>
+    <p>Nous vous remercions de votre commande sur <a href="www.jovive.fr">jovive.fr</a>.</p>
+    <p>Nous sommes heureux de vous informer que votre commande à été livré.</p>
     <p>
-        Bonjour [Nom du client],
-
-        Nous vous remercions de votre commande sur [nom du site/magasin]. Nous sommes heureux de vous informer que votre
-        commande a été validée et est actuellement en cours de préparation dans nos entrepôts.
-
-        Notre équipe s'efforce de traiter votre commande dans les meilleurs délais afin de vous assurer une livraison
-        rapide et
-        efficace. Si vous avez des questions ou des préoccupations concernant votre commande, n'hésitez pas à nous
-        contacter à
-        l'adresse e-mail [adresse e-mail du service client] ou en répondant directement à ce message.
-
-        Nous vous tiendrons informé de l'avancement de votre commande et vous enverrons un e-mail dès qu'elle sera
-        expédiée.
-        Nous espérons que vous apprécierez votre expérience de shopping chez [nom du site/magasin] et nous vous
-        remercions de
-        votre confiance.
-
-        Cordialement,
-        L'équipe de [nom du site/magasin]
+        Si vous avez des questions ou des préoccupations concernant votre commande, n'hésitez pas à nous contacter
+        sur <a href="www.jovive.fr/contact">notre site</a> ou en répondant directement à ce message.
     </p>
-    <table>
-        <thead>
-            <tr>
-                <th>Produit</th>
-                <th>Quantité</th>
-                <th>Prix unitaire</th>
-                <th>Prix total</th>
-            </tr>
-        </thead>
-        <tbody>
-            <% orderDetails.forEach(function(product) { %>
+    <p>
+        Nous espérons que vous avez apprécié votre expérience chez <a href="www.jovive.fr">jovive.fr</a> et nous
+        vous remercions de votre confiance.
+    </p>
+    <p>Cordialement,</p>
+    <p>L'équipe de <a href="www.jovive.fr">jovive.fr</a></p>
+    <p>Voici un récapitulatif de votre commande :</p>
+        <table>
+            <thead>
                 <tr>
-                    <td>
-                        <%= product.productName %>
-                    </td>
-                    <td>
-                        <%= product.quantity %>
-                    </td>
-                    <td>
-                        <%= product.price %> €
-                    </td>
-                    <td>
-                        <%= product.price * product.quantity %> €
-                    </td>
+                    <th>Produit</th>
+                    <th>Quantité</th>
+                    <th>Prix unitaire</th>
+                    <th>Prix total</th>
                 </tr>
-                <% }); %>
-        </tbody>
-    </table>
-    <div class="signature">
-        <p>Jovive.fr</p>
-    </div>
+            </thead>
+            <tbody>
+                <% orderDetails.forEach(function(product) { %>
+                    <tr>
+                        <td>
+                            <%= product.productName %>
+                        </td>
+                        <td>
+                            <%= product.quantity %>
+                        </td>
+                        <td>
+                            <%= product.price %> €
+                        </td>
+                        <td>
+                            <%= product.price * product.quantity %> €
+                        </td>
+                    </tr>
+                    <% }); %>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3">Total</td>
+                    <td><%= totalPrice %> €</td>
+                </tr>
+            </tfoot>
+        </table>
+        <p>Vous pouvez suivre l'état de votre commande sur notre site en vous connectant à votre <a href="www.jovive.fr/compte">compte</a>.</p>
+        <p>Si vous avez des questions ou des remarques, n'hésitez pas à nous contacter.</p>
+        <a href="www.jovive.fr" class="btn">JOVIVE.FR</a>
 </body>
 
 </html>

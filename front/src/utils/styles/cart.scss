@@ -2,28 +2,58 @@
 @import '../styles/mixins';
 
 .cart {
-  width: 90vw;
+  width: 95vw;
   display: flex;
   align-items: flex-start;
   justify-content: center;
   gap: 1rem;
-  max-width: 1300px;
-  margin: 10vh 0 5vh 0;
-  background: rgb(240, 240, 240);
-  &__rightSection {
-    width: 20%;
+  max-width: 1440px;
+  padding-top: $margin-top-page;
+  &__empty {
+    @include box;
+    font-family: 'GameCube';
+    margin: 3rem;
+    padding: 2rem 1rem;
+    width: 100%;
     display: flex;
     flex-direction: column;
+    justify-content: flex-start;
+    gap: 1rem;
+    text-align: center;
+    & a {
+      padding: 1rem;
+    }
+    & a:hover {
+      text-decoration: underline !important;
+    }
+  }
+  &__rightSection {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    color: white;
+    width: 25%;
+    height: 100%;
     @include summary;
+    &__background {
+      position: fixed;
+      top: 0;
+      background: no-repeat url('../images/main.jpg');
+      background-size: cover;
+      width: 22.5%;
+      max-width: 350px;
+      height: 100vh;
+    }
   }
   &__leftSection {
-    width: 80%;
+    width: 75%;
     display: flex;
     flex-direction: column;
     align-items: center;
     & > h2 {
       width: 100%;
       font-weight: 400;
+      color: white;
       margin: 1rem 0;
       & > span {
         font-size: 1rem;
@@ -40,6 +70,18 @@
       display: flex;
       gap: 10px;
       padding: 1rem 0;
+      color: white;
+      &__billingForm {
+        &__addressForm {
+          &__createAccount {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+          }
+        }
+      }
     }
     &__toConnect {
       display: flex;
@@ -47,71 +89,25 @@
       gap: 10px;
       padding: 1rem 0;
       &__title {
+        color: white;
         display: flex;
         gap: 10px;
         padding-bottom: 1rem;
       }
     }
-    &__customerInfo {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      gap: 0.5rem;
-      &__orderInfos {
-        display: flex;
-        flex-direction: column;
-        width: 95%;
-        & label {
-          font-weight: 700;
-        }
-      }
-      &__form {
-        &__message {
-          font-size: 14px;
-          font-style: italic;
-          text-align: right;
-        }
-        &__errorMsg {
-          color: red;
-        }
-      }
-      & > * {
-        flex: 0 0 50%;
-        width: 100%;
-      }
-      &__leftCol {
-        width: 95%;
-        padding: 0.5rem;
-        &__billingAddress {
-          padding: 1rem;
-          & h4 {
-            padding: 0.5rem 0;
-          }
-        }
-        &__title {
-          margin: 1rem 0;
-        }
-        &__address {
-          & > p {
-            margin: 0.1rem 0;
-          }
-        }
-      }
-      &__rightCol {
-        width: 95%;
-        padding: 0.5rem;
-        &__title {
-          display: flex;
-          gap: 0.5rem;
-          &__checkbox {
-            position: relative;
-            display: flex;
-            flex-direction: row;
-          }
-        }
-        @include shippingAddress;
-      }
-    }
+    @include customerInfo;
     @include cartDetails;
   }
+  &__payment {
+    width: 100%;
+    & > form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+  }
+}
+
+.CardField-number {
+  background: black;
 }

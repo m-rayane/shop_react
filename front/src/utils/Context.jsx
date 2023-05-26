@@ -27,6 +27,7 @@ export const ContextProvider = ({ children }) => {
   const [targetProduct, setTargetProduct] = useState('')
   const [targetCategory, setTargetCategory] = useState('')
   const [targetAddress, setTargetAddress] = useState()
+  const [targetOrder, setTargetOrder] = useState('')
   const [errorMsg, setErrorMsg] = useState()
   const [additionnalComment, setAdditionnalComment] = useState()
   const [shippingAddressChecked, setShippingAddressChecked] = useState(false)
@@ -35,6 +36,14 @@ export const ContextProvider = ({ children }) => {
   const [orderDetailByOrder, setOrderDetailByOrder] = useState([])
   const [cartData, setCartData] = useState()
   const [totalQuantity, setTotalQuantity] = useState()
+  const [orderId, setOrderId] = useState()
+  const [technicalData, setTechnicalData] = useState()
+  const [optionData, setOptionData] = useState([])
+  const [allOptionData, setAllOptionData] = useState()
+  const [showAddShippingForm, setShowAddShippingForm] = useState()
+  const [clientSecret, setClientSecret] = useState('')
+  const [shippingCostData, setShippingCostData] = useState([])
+  const [isEditedProduct, setIsEditedProduct] = useState(false)
 
   // to disconnect if token expired
   useEffect(() => {
@@ -66,16 +75,18 @@ export const ContextProvider = ({ children }) => {
     }
   }, [])
 
+  // to get cart data on localstorage
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem('cart'))
     setCartData(data)
   }, [setCartData])
 
+  // to get total quantity on cart
   useEffect(() => {
     let totalQuantity = 0
     if (cartData) {
       for (let i = 0; i < cartData.length; i++) {
-        totalQuantity += cartData[i].quantity
+        totalQuantity += parseInt(cartData[i].quantity)
       }
       setTotalQuantity(totalQuantity)
     }
@@ -115,11 +126,50 @@ export const ContextProvider = ({ children }) => {
     const getProducts = async () => {
       setIsLoading(true)
       const response = await productServices.getProduct()
-      setProductsData(response.reverse())
+      setProductsData(response)
       setIsLoading(false)
     }
     getProducts()
-  }, [userId])
+  }, [])
+
+  // to get technical data
+  useEffect(() => {
+    if (targetProduct) {
+      const getTechnicalsByProduct = async () => {
+        setIsLoading(true)
+        setTechnicalData('')
+        const response = await productServices.getTechnical(targetProduct)
+        setTechnicalData(response)
+        setIsLoading(false)
+      }
+      getTechnicalsByProduct()
+    }
+  }, [targetProduct])
+
+  // to get all option data
+  useEffect(() => {
+    const getAllOptions = async () => {
+      setIsLoading(true)
+      const response = await productServices.getAllOptions()
+      setAllOptionData(response)
+      setIsLoading(false)
+    }
+    getAllOptions()
+  }, [])
+
+  // to get option data by product
+  useEffect(() => {
+    if (targetProduct) {
+      const getOptionsByProduct = async () => {
+        setIsLoading(true)
+        setOptionData('')
+        const response = await productServices.getOption(targetProduct)
+        response ? setOptionData(response) : setAllOptionData('')
+        setIsLoading(false)
+      }
+      getOptionsByProduct()
+    }
+  }, [targetProduct])
 
   // to get shipping address data
   useEffect(() => {
@@ -134,15 +184,16 @@ export const ContextProvider = ({ children }) => {
     }
   }, [userId])
 
-  // useEffect(() => {
-  //   const getAllAddress = async () => {
-  //     setIsLoading(true)
-  //     const response = await userServices.getAllAddress()
-  //     setShippingAddress(response)
-  //     setIsLoading(false)
-  //   }
-  //   getAllAddress()
-  // }, [userId])
+  // to get shipping costs data
+  useEffect(() => {
+    const getShippingCosts = async () => {
+      setIsLoading(true)
+      const response = await orderServices.getShippingCosts()
+      setShippingCostData(response)
+      setIsLoading(false)
+    }
+    getShippingCosts()
+  }, [])
 
   // to get all orders
   useEffect(() => {
@@ -163,7 +214,7 @@ export const ContextProvider = ({ children }) => {
       const getOrdersByUser = async () => {
         setIsLoading(true)
         const response = await orderServices.getOrdersByUser(userId)
-        setOrdersByUser(response.reverse())
+        setOrdersByUser(response)
         setIsLoading(false)
       }
       getOrdersByUser()
@@ -176,7 +227,7 @@ export const ContextProvider = ({ children }) => {
       const getOrderDetailByUser = async () => {
         setIsLoading(true)
         const response = await orderServices.getOrderDetailByUser(userId)
-        setOrderDetailByUser(response.reverse())
+        setOrderDetailByUser(response)
         setIsLoading(false)
       }
       getOrderDetailByUser()
@@ -187,7 +238,23 @@ export const ContextProvider = ({ children }) => {
   const getProducts = async () => {
     const reRender = async () => {
       const reqRes = await productServices.getProduct()
-      setProductsData(reqRes.reverse())
+      setProductsData(reqRes)
+    }
+    reRender()
+  }
+
+  const getTechnicalsByProduct = async (id) => {
+    const reRender = async () => {
+      const response = await productServices.getTechnical(id)
+      setTechnicalData(response)
+    }
+    reRender()
+  }
+
+  const getOptionsByProduct = async (id) => {
+    const reRender = async () => {
+      const response = await productServices.getOption(id)
+      setOptionData(response)
     }
     reRender()
   }
@@ -301,6 +368,15 @@ export const ContextProvider = ({ children }) => {
     reRender()
   }
 
+  const getAllOptions = async () => {
+    const reRender = async () => {
+      const reqRes = await productServices.getAllOptions()
+      console.log(reqRes)
+      setAllOptionData(reqRes)
+    }
+    reRender()
+  }
+
   return (
     <Context.Provider
       value={{
@@ -315,6 +391,7 @@ export const ContextProvider = ({ children }) => {
         targetProduct,
         targetCategory,
         targetAddress,
+        targetOrder,
         shippingAddress,
         allOrders,
         ordersByUser,
@@ -328,6 +405,14 @@ export const ContextProvider = ({ children }) => {
         cartData,
         totalQuantity,
         userLS,
+        orderId,
+        technicalData,
+        optionData,
+        allOptionData,
+        showAddShippingForm,
+        clientSecret,
+        shippingCostData,
+        isEditedProduct,
         getProducts,
         getReview,
         getUser,
@@ -339,9 +424,12 @@ export const ContextProvider = ({ children }) => {
         setTargetProduct,
         setTargetCategory,
         setTargetAddress,
+        setTargetOrder,
         getShippingAddress,
         getAllOrders,
         getOrdersByUser,
+        getTechnicalsByProduct,
+        getOptionsByProduct,
         setErrorMsg,
         setAdditionnalComment,
         setShippingAddressChecked,
@@ -350,6 +438,15 @@ export const ContextProvider = ({ children }) => {
         setTotalQuantity,
         getUserLS,
         getTotalQuantity,
+        setOrderId,
+        setTechnicalData,
+        setOptionData,
+        setAllOptionData,
+        setShowAddShippingForm,
+        setClientSecret,
+        getAllOptions,
+        setIsEditedProduct,
+        setProductsData,
       }}
     >
       {children}

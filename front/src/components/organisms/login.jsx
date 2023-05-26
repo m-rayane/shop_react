@@ -132,6 +132,7 @@ export default function Login() {
 
   const handleChange = async () => {
     setError('')
+    setErrorMsg('')
     setErrorBtn('')
   }
 
@@ -147,16 +148,12 @@ export default function Login() {
   }
 
   const handleTestFields = () => {
-    console.log(targetCategory)
-    toHandleTestField(
-      targetCategory.category,
-      targetCategory.name,
-      targetCategory.message,
-      {
-        errorMsg: handleSubmitErrorMsg,
-      }
-    )
+    toHandleTestField(targetCategory.category, targetCategory.message, {
+      errorMsg: handleSubmitErrorMsg,
+    })
   }
+
+  console.log(errorMsg)
 
   return (
     <>
@@ -189,6 +186,7 @@ export default function Login() {
                     className="auth__content__login__form"
                     handleChange={handleChange}
                     errorBtn={errorBtn}
+                    defaultValue={{}}
                   />
                   <button>Se connecter</button>
                 </form>
@@ -209,6 +207,7 @@ export default function Login() {
                     handleBlur={handleTestFields}
                   />
                   <button>Créer un compte</button>
+                  <p style={{ color: 'red' }}>{errorMsg}</p>
                 </form>
               </div>
             )}

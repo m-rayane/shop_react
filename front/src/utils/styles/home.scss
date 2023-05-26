@@ -7,10 +7,11 @@
   &__section {
     position: relative;
     width: 100vw;
+    height: 100vh;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
+    transition: all 3s ease-in-out;
     & > h1 {
       position: absolute;
       top: 25%;
@@ -27,71 +28,24 @@
       position: absolute;
       padding: 10px 30px;
       bottom: 3vh;
-      font-size: 1em;
+      font-size: 1rem;
       font-weight: 700;
       background: $primary-color;
-      transition: all 0.3s ease-in-out;
       &:hover {
         filter: brightness(1.2);
         box-shadow: 0 0 20px $primary-color;
-      }
-    }
-    &__carousel {
-      overflow: hidden;
-      transition: all 1s ease-in-out;
-      & > button {
-        position: absolute;
-        border: 1px solid red;
-        z-index: 5;
-      }
-      &__slides {
-        display: flex;
-        transition: transform 0.5s ease-in-out;
-        & > * {
-          position: relative;
-          flex: 0 0 100%;
-          & > img {
-            width: 100%;
-            height: 66vh;
-            object-fit: cover;
-          }
-          & h3 {
-            position: absolute;
-            width: 50%;
-            top: 5%;
-            left: 2%;
-            background: rgba($primary-color, 0.3);
-            padding: 2% 1%;
-            font-size: 2em;
-            font-weight: bold;
-            text-align: center;
-          }
-        }
-      }
-      &__prevBtn {
-        top: 40%;
-        left: 0;
-        width: 50px;
-        height: 25px;
-      }
-      &__nextBtn {
-        top: 40%;
-        right: 0;
-        width: 50px;
-        height: 25px;
       }
     }
     &__products {
       display: flex;
       flex-wrap: nowrap;
       justify-content: space-between;
+      gap: 0.2rem;
       width: 95vw;
-      height: 100%;
-      margin: 5vh 0;
       &__miniCard {
         position: relative;
-        width: 23vw;
-        height: 23vw;
+        width: 18vw;
+        height: 18vw;
         list-style: none;
         overflow: hidden;
         &__title {
@@ -106,6 +60,8 @@
           padding-bottom: 5px;
           background-color: rgba($tertiary-color, 0.3);
           transition: all 0.3s ease-in-out;
+          font-family: 'GameCube';
+          font-size: 0.8rem;
         }
         & > a {
           & > img {
@@ -138,7 +94,31 @@
         }
       }
     }
+    &__content {
+      transform: scale(0);
+      opacity: 0;
+      display: flex;
+      flex-direction: column;
+      width: 75%;
+      gap: 2rem;
+      padding: 3rem;
+      transition: all 0.5s ease-in-out;
+      &__name {
+        font-family: 'GameCube';
+        font-size: 4rem;
+        text-align: center;
+      }
+      &__message {
+        font-size: 3rem;
+        text-align: center;
+      }
+    }
   }
+}
+
+.showContent {
+  transform: scale(1);
+  opacity: 1;
 }
 
 h1 {

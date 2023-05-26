@@ -202,6 +202,22 @@ exports.getShippingAddress = (req, res, next) => {
   }
 }
 
+exports.editShippingAddress = (req, res, next) => {
+  if (req.auth.role === 'admin' || req.body.userId == req.auth.userId) {
+    const addressData = { ...req.body }
+    dbConnection.query(
+      'UPDATE shipping_address SET ? WHERE id = ?',
+      [addressData, req.parama.id],
+      (err, result) => {
+        if (err) return res.status(500).json(err)
+        return res.status(200).json({ message: 'address updated !' })
+      }
+    )
+  } else {
+    res.status(401).json({ message: 'Not authorized' })
+  }
+}
+
 exports.deleteShippingAddress = (req, res, next) => {
   console.log(req.body)
   if (req.auth.role === 'admin' || req.auth.userId) {

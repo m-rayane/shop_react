@@ -9,6 +9,8 @@ export const TextField = ({
   defaultValue,
   children,
   onChange,
+  onBlur,
+  onFocus,
 }) => {
   return (
     <div className={className}>
@@ -23,7 +25,10 @@ export const TextField = ({
         placeholder={placeHolder}
         defaultValue={defaultValue}
         onChange={onChange}
+        onBlur={onBlur}
+        onFocus={onFocus}
         required
+        style={{ width: '100%' }}
       ></textarea>
     </div>
   )

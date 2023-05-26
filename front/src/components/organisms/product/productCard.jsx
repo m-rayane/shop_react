@@ -1,21 +1,22 @@
 import '../../../utils/styles/App.scss'
 
 export default function ProductCard({ product, descLength, className }) {
-  let shortDescription = ''
-  if (product.description.length > descLength) {
-    shortDescription = product.description.substring(0, descLength) + '...'
-  }
-
   return (
     <div className={className}>
       <div className={`${className}__image`}>
         <img src={product.image} alt={product.name} />
       </div>
-      <h3>{product.name}</h3>
-      <p>
-        à partir de <span>{product.price}</span> €
-      </p>
-      <button>Ajouter au panier</button>
+      <div className={`${className}__content`}>
+        <div className={`${className}__content__header`}>
+          <h3>{product.name}</h3>
+          <p className={`${className}__content__header__price`}>
+            à partir de <span>{product.price / 100}</span> €
+          </p>
+        </div>
+        <p className={`${className}__content__description`}>
+          {product.shortDescription}
+        </p>
+      </div>
     </div>
   )
 }

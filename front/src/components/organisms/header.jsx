@@ -15,19 +15,17 @@ import { Context } from '../../utils/Context'
 export default function Header() {
   const { userData, totalQuantity } = useContext(Context)
 
-  console.log(totalQuantity)
-
   return (
     <header className="header">
+      <Link to="/boutique" style={{ textDecoration: 'none', color: 'white' }}>
+        <div className="header__shop">BOUTIQUE</div>
+      </Link>
       <Link to="/">
         <div className="header__logo">
           <LogoSvg />
         </div>
       </Link>
       <div className="header__nav">
-        <Link to="/boutique" style={{ textDecoration: 'none', color: 'white' }}>
-          <div className="header__nav__btn">BOUTIQUE</div>
-        </Link>
         <Link to="/panier" style={{ fill: 'white' }}>
           <div className="header__nav__cartSvg">
             <CartSvg />
@@ -38,17 +36,25 @@ export default function Header() {
             ''
           )}
         </Link>
-        <Link to="" style={{ textDecoration: 'none', color: 'white' }}>
-          <div className="header__nav__contactSvg">
-            <ContactSvg />
-          </div>
-        </Link>
         {userData.role !== 'admin' && (
-          <Link to="/compte" style={{ textDecoration: 'none', color: 'white' }}>
-            <div className="header__nav__profileSvg">
-              <ProfileSvg />
-            </div>
-          </Link>
+          <>
+            <Link
+              to="/contact"
+              style={{ textDecoration: 'none', color: 'white' }}
+            >
+              <div className="header__nav__contactSvg">
+                <ContactSvg />
+              </div>
+            </Link>
+            <Link
+              to="/compte"
+              style={{ textDecoration: 'none', color: 'white' }}
+            >
+              <div className="header__nav__profileSvg">
+                <ProfileSvg />
+              </div>
+            </Link>
+          </>
         )}
         {userData.role === 'admin' && (
           <Link

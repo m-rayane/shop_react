@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 
 import { Context } from '../utils/Context'
 
@@ -22,6 +22,7 @@ import BillingForm from '../components/organisms/billingForm'
 import CustomerInfo from '../components/organisms/customerInfo'
 import Summary from '../components/organisms/summary'
 import { SignInForm } from '../components/molecules/signInForm'
+import StripeContainer from '../components/organisms/stripe/stripeContainer'
 
 import { toLogin } from '../components/atoms/Services/authServices'
 import { toHandleTestField } from '../components/atoms/Services/accountServices'
@@ -33,7 +34,6 @@ export default function Cart() {
     userData,
     usersEmails,
     shippingAddress,
-    getShippingAddress,
     getProducts,
     targetCategory,
     targetAddress,
@@ -45,14 +45,17 @@ export default function Cart() {
     cartData,
     setCartData,
     totalQuantity,
+    setTotalQuantity,
+    allOptionData,
   } = useContext(Context)
 
   const [totalPrice, setTotalPrice] = useState(0)
   const [isValidated, setIsValidated] = useState(false)
   const [isLogin, setIsLogin] = useState(false)
-  const [isCreatingAnAccount, setIsCreatingAnAccount] = useState(false)
+  const [isCreatingAnAccount, setIsCreatingAnAccount] = useState(true)
   const [error, setError] = useState('')
   const [errorBtn, setErrorBtn] = useState('')
+  const [showPayment, setShowPayment] = useState(false)
 
   const navigate = useNavigate()
 
@@ -97,22 +100,35 @@ export default function Cart() {
     userData,
   ])
 
-  useEffect(() => {
-    let totalPrice = 0
-    if (cartData) {
-      cartData.forEach((item) => {
-        const productData = productsData.find((p) => p._id === item.productId)
-        if (productData) {
-          totalPrice += productData._price * item.quantity
-        }
-      })
-    }
-    setTotalPrice(totalPrice)
-  }, [cartData, productsData])
+  // useEffect(() => {
+  //   let totalPrice = 0
+  //   if (cartData) {
+  //     cartData.forEach((item) => {
+  //       const productData = productsData.find(
+  //         (p) => p._id === item.productId && !item.option
+  //       )
+  //       if (productData) {
+  //         totalPrice += productData._price * item.quantity
+  //       }
+  //     })
+  //     cartData.forEach((item) => {
+  //       const productWithOption = productsData.find(
+  //         (p) => p._id === item.productId && item.option
+  //       )
+  //       const option = allOptionData.find(
+  //         (o) => o._name === productWithOption.option
+  //       )
+  //       if (productWithOption) {
+  //         totalPrice += productWithOption._price * item.quantity
+  //       }
+  //     })
+  //   }
+  //   setTotalPrice(totalPrice)
+  // }, [cartData])
 
   const handleCartSubmit = async (e) => {
     e.preventDefault()
-    setIsValidated(true)
+    userData ? setIsValidated(true) : setIsLogin(true)
   }
 
   function handleChangeCreatingAnAccount() {
@@ -122,101 +138,105 @@ export default function Cart() {
   const handleCreateAnAccount = async (e) => {
     e.preventDefault()
     // setIsValidated(false)
-    if (createAnAccount && createAnAccount.checked) {
-      // setError('')
+    // setError('')
+    console.log('créer un compte...')
 
-      const firstNameValue = e.target['firstName'].value
-      const lastNameValue = e.target['lastName'].value
-      const emailValue = e.target['signUpEmail'].value
-      const passwordValue = e.target['signUpPassword'].value
-      const confirmPasswordValue = e.target['confirmPassword'].value
-      const addressValue = e.target['billingAddress'].value
-      const zipCodeValue = e.target['billingZipCode'].value
-      const cityValue = e.target['billingCity'].value
-      const phoneValue = e.target['billingPhoneNumber'].value
+    const firstNameValue = e.target['firstName'].value
+    const lastNameValue = e.target['lastName'].value
+    const emailValue = e.target['signUpEmail'].value
+    const passwordValue = e.target['signUpPassword'].value
+    const confirmPasswordValue = e.target['confirmPassword'].value
+    const addressValue = e.target['billingAddress'].value
+    const zipCodeValue = e.target['billingZipCode'].value
+    const cityValue = e.target['billingCity'].value
+    const phoneValue = e.target['billingPhoneNumber'].value
 
-      const firstNameTest = regexName.test(firstNameValue)
-      const lastNameTest = regexName.test(lastNameValue)
-      const emailTest = regexEmail.test(emailValue)
-      const passwordTest = regexPassword.test(passwordValue)
-      const addressTest = regexAddress.test(addressValue)
-      const zipCodeTest = regexZipCode.test(zipCodeValue)
-      const cityTest = regexCity.test(cityValue)
-      const phoneNumberTest = regexPhone.test(phoneValue)
+    const firstNameTest = regexName.test(firstNameValue)
+    const lastNameTest = regexName.test(lastNameValue)
+    const emailTest = regexEmail.test(emailValue)
+    const passwordTest = regexPassword.test(passwordValue)
+    const addressTest = regexAddress.test(addressValue)
+    const zipCodeTest = regexZipCode.test(zipCodeValue)
+    const cityTest = regexCity.test(cityValue)
+    const phoneNumberTest = regexPhone.test(phoneValue)
 
-      const isEmail = usersEmails.find((user) => user.email === emailValue)
-      isEmail ? setErrorMsg('Email already exist') : console.log('email ok')
+    const isEmail = usersEmails.find((user) => user.email === emailValue)
+    isEmail ? setErrorMsg('Email already exist') : console.log('email ok')
 
-      if (firstNameTest === false || firstNameValue.trim() === '') {
-        setErrorMsg("Le prénom n'est pas valide !")
-        setErrorBtn('errorBtn')
-      } else if (lastNameTest === false || lastNameValue.trim() === '') {
-        setErrorMsg("Le nom n'est pas valide !")
-        setErrorBtn('errorBtn')
-      } else if (emailTest === false || emailValue.trim() === '') {
-        setErrorMsg("L'adresse email n'est pas valide !")
-        setErrorBtn('errorBtn')
-      } else if (passwordTest === false || passwordValue.trim() === '') {
-        setErrorMsg(
-          "Le mot de passe choisi n'est pas valide. Il doit contenir au moins 8 caractères, 1 majuscule, 1 minuscule et un chiffre. Les caractères spéciaux suivants ! @ # $ % ^ & * sont également authorisés."
-        )
-        setErrorBtn('errorBtn')
-      } else if (passwordTest === false || passwordValue.trim() === '') {
-        setErrorMsg('Le mot de passe ne correspond pas !')
-        setErrorBtn('errorBtn')
-      } else if (addressTest === false || addressValue.trim() === '') {
-        setErrorMsg("L'adresse renseignée n'est pas valide !")
-        setErrorBtn('errorBtn')
-      } else if (zipCodeTest === false || zipCodeValue.trim() === '') {
-        setErrorMsg("Le code postal renseigné n'est pas valide !")
-        setErrorBtn('errorBtn')
-      } else if (cityTest === false || cityValue.trim() === '') {
-        setErrorMsg("La ville renseignée n'est pas valide !")
-        setErrorBtn('errorBtn')
-      } else if (phoneNumberTest === false || phoneValue.trim() === '') {
-        setErrorMsg("La ville renseignée n'est pas valide !")
-        setErrorBtn('errorBtn')
-      } else if (isEmail) {
-        setErrorMsg('Un compte avec cette adresse email existe déjà !')
-        console.log('Un compte avec cette adresse email existe déjà !')
-      } else {
-        try {
+    if (firstNameTest === false || firstNameValue.trim() === '') {
+      setErrorMsg("Le prénom n'est pas valide !")
+      setErrorBtn('errorBtn')
+    } else if (lastNameTest === false || lastNameValue.trim() === '') {
+      setErrorMsg("Le nom n'est pas valide !")
+      setErrorBtn('errorBtn')
+    } else if (emailTest === false || emailValue.trim() === '') {
+      setErrorMsg("L'adresse email n'est pas valide !")
+      setErrorBtn('errorBtn')
+    } else if (passwordTest === false || passwordValue.trim() === '') {
+      setErrorMsg(
+        "Le mot de passe choisi n'est pas valide. Il doit contenir au moins 8 caractères, 1 majuscule, 1 minuscule et un chiffre. Les caractères spéciaux suivants ! @ # $ % ^ & * sont également authorisés."
+      )
+      setErrorBtn('errorBtn')
+    } else if (passwordTest === false || passwordValue.trim() === '') {
+      setErrorMsg('Le mot de passe ne correspond pas !')
+      setErrorBtn('errorBtn')
+    } else if (addressTest === false || addressValue.trim() === '') {
+      setErrorMsg("L'adresse renseignée n'est pas valide !")
+      setErrorBtn('errorBtn')
+    } else if (zipCodeTest === false || zipCodeValue.trim() === '') {
+      setErrorMsg("Le code postal renseigné n'est pas valide !")
+      setErrorBtn('errorBtn')
+    } else if (cityTest === false || cityValue.trim() === '') {
+      setErrorMsg("La ville renseignée n'est pas valide !")
+      setErrorBtn('errorBtn')
+    } else if (phoneNumberTest === false || phoneValue.trim() === '') {
+      setErrorMsg("La ville renseignée n'est pas valide !")
+      setErrorBtn('errorBtn')
+    } else if (isEmail) {
+      setErrorMsg('Un compte avec cette adresse email existe déjà !')
+      console.log('Un compte avec cette adresse email existe déjà !')
+    } else {
+      try {
+        const userData = {
+          firstName: firstNameValue,
+          lastName: lastNameValue,
+          email: emailValue,
+          password: passwordValue,
+          phoneNumber: phoneValue,
+          address: addressValue,
+          zipCode: zipCodeValue,
+          city: cityValue,
+        }
+        await userServices.createUser(userData)
+      } catch (err) {
+        console.error(err)
+      } finally {
+        console.log('Compte créé')
+        if (
+          !isEmail &&
+          emailValue &&
+          passwordValue &&
+          passwordValue === confirmPasswordValue
+        ) {
+          console.log('to connect...')
+          const email = emailValue
+          const password = passwordValue
           const userData = {
-            firstName: firstNameValue,
-            lastName: lastNameValue,
-            email: emailValue,
-            password: passwordValue,
-            phoneNumber: phoneValue,
-            address: addressValue,
-            zipCode: zipCodeValue,
-            city: cityValue,
+            email: email,
+            password: password,
           }
-          await userServices.createUser(userData)
-        } catch (err) {
-          console.error(err)
-        } finally {
-          console.log('Compte créé')
-          if (
-            !isEmail &&
-            emailValue &&
-            passwordValue &&
-            passwordValue === confirmPasswordValue
-          ) {
-            const email = emailValue
-            const password = passwordValue
-            const userData = {
-              email: email,
-              password: password,
+          await userServices.logInUser(userData).then((response) => {
+            localStorage.setItem('userId', response.data.userId)
+            localStorage.setItem(
+              'expirationDate',
+              response.data.tokenExpiration
+            )
+            if (response) {
+              console.log('compte créé')
+              setIsValidated(true)
             }
-            await userServices.logInUser(userData).then((response) => {
-              localStorage.setItem('userId', response.data.userId)
-              localStorage.setItem(
-                'expirationDate',
-                response.data.tokenExpiration
-              )
-            })
-            getProducts()
-          }
+          })
+          getProducts()
         }
       }
     }
@@ -231,26 +251,39 @@ export default function Cart() {
     setCartData(data)
   }, [setCartData])
 
-  const handleOrderSubmit = async () => {
+  const handleOrderSubmit = () => {
+    userData.length !== 0 ? setShowPayment(true) : setIsLogin(true)
+  }
+
+  const handleGetShippingCost = async (id) => {
+    const shippingCost = await orderServices.getShippingCosts(id)
+    console.log(shippingCost)
+  }
+
+  const handlePaymentSuccess = async () => {
+    console.log('paiement avec succès')
     const newCartData = []
     if (cartData) {
       for (let i = 0; i < cartData.length; i++) {
         const productInCart = productsData.find(
           (p) => p._id === cartData[i].productId
         )
+        const productPrice = cartData[i].option
+          ? allOptionData.find((o) => o._name === cartData[i].option)._price
+          : productInCart._price
         if (productInCart) {
           const orderProduct = {
             productName: productInCart._name,
             productId: productInCart._id,
             quantity: cartData[i].quantity,
-            price: productInCart._price,
+            option: cartData[i].option,
+            price: productPrice,
           }
           newCartData.push(orderProduct)
         }
       }
     }
     if (userData.id && selectedShippingAddress) {
-      console.log(newCartData)
       const orderData = {
         userId: userData.id,
         totalPrice: totalPrice,
@@ -262,10 +295,10 @@ export default function Cart() {
         city: selectedShippingAddress.city,
         orderDetails: newCartData,
       }
-
       try {
-        const response = await orderServices.postOrder(orderData)
         console.log('Panier validé')
+        console.log(orderData)
+        const response = await orderServices.postOrder(orderData)
         const emailDataAdmin = {
           from: 'nodemailer38@gmail.com',
           to: 'nodemailer38@gmail.com',
@@ -274,6 +307,9 @@ export default function Cart() {
           title: `Nouvelle commande n° ${response.data.orderId}`,
           text: `Une nouvelle commande a été passée avec succès. Le numéro de commande est : ${response.data.orderId}.`,
           orderStatus: 'submitted',
+          customerFirstName: userData.firstName,
+          customerLastName: userData.lastName,
+          totalPrice: totalPrice,
           orderDetails: newCartData,
         }
         const emailDataClient = {
@@ -284,6 +320,9 @@ export default function Cart() {
           orderId: response.data.orderId,
           text: `Votre commande a été passée avec succès. Le numéro de commande est : ${response.data.orderId}.`,
           orderStatus: 'submitted',
+          customerFirstName: userData.firstName,
+          customerLastName: userData.lastName,
+          totalPrice: totalPrice,
           orderDetails: newCartData,
         }
         await Promise.all([
@@ -291,6 +330,8 @@ export default function Cart() {
           emailServices.sendEmail(emailDataClient),
         ])
         localStorage.removeItem('cart')
+        setCartData('')
+        setTotalQuantity(0)
         navigate(`/confirmation/${response.data.orderId}`, { replace: true })
       } catch (error) {
         console.error(error)
@@ -316,12 +357,22 @@ export default function Cart() {
     )
   }
 
-  console.log(cartData)
+  const linkStyle = {
+    color: 'blue',
+    textDecoration: 'none',
+  }
 
   return (
     <div className="cart">
       {!cartData || totalQuantity === 0 ? (
-        <h1>Votre panier est vide.</h1>
+        <>
+          <div className="cart__empty">
+            <h1>votre panier est actuellement vide !</h1>
+            <Link to={`/boutique`} style={linkStyle}>
+              continuez vos achats...
+            </Link>
+          </div>
+        </>
       ) : (
         <>
           <section className="cart__leftSection">
@@ -331,6 +382,8 @@ export default function Cart() {
                 cartData={cartData}
                 setTotalPrice={setTotalPrice}
                 origin="cart"
+                showTotalQuantity={true}
+                showModifyButton={true}
               />
             )}
             {isValidated && cartData && (
@@ -340,6 +393,9 @@ export default function Cart() {
                   cartData={cartData}
                   setTotalPrice={setTotalPrice}
                   origin="cart"
+                  showTotalQuantity={true}
+                  showModifyButton={true}
+                  productsData={productsData}
                 />
 
                 {userData.id ? (
@@ -370,17 +426,16 @@ export default function Cart() {
                             Cliquez ici pour vous connecter
                           </p>
                         </div>
-                        <form
-                          onSubmit={handleCreateAnAccount}
-                          className="cart__leftSection__customer__billingForm"
-                        >
+                        <form onSubmit={handleCreateAnAccount}>
                           <BillingForm
+                            className="cart__leftSection__customer__billingForm"
                             isCreating={isCreatingAnAccount}
-                            handleChange={handleChangeCreatingAnAccount}
+                            handleChange={() => setErrorMsg('')}
                             handleBlur={handleTestFields}
                             handleAddressFormChange={() => setErrorMsg('')}
                           />
                           <button>Créer un compte</button>
+                          {errorMsg && <p className="errorMsg">{errorMsg}</p>}
                         </form>
                       </>
                     )}
@@ -396,11 +451,11 @@ export default function Cart() {
                             }}
                           >
                             {' '}
-                            Ou continuez...
+                            Ou créer un compte...
                           </p>
                         </div>
                         <form onSubmit={handleLogin} className="">
-                          <SignInForm />
+                          <SignInForm handleChange={() => setErrorMsg('')} />
                           <button>Se connecter</button>
                           <div className="auth__content__message">
                             <div className="auth__content__message__error">
@@ -414,8 +469,17 @@ export default function Cart() {
                 )}
               </>
             )}
+            {showPayment && (
+              <div className="cart__payment">
+                <StripeContainer
+                  amount={totalPrice * 100}
+                  onPaymentSuccess={handlePaymentSuccess}
+                />
+              </div>
+            )}
           </section>
           <section className="cart__rightSection">
+            <div className="cart__rightSection__background"></div>
             {cartData && (
               <Summary
                 className="cart__rightSection__summary"

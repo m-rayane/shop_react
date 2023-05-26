@@ -6,9 +6,21 @@ export default function ConfirmBox({
   confirmName,
   handleCancel,
   handleConfirm,
+  right,
+  left,
+  top,
+  bottom,
 }) {
   return (
-    <div className="confirmBox">
+    <div
+      className="confirmBox"
+      style={{
+        right: `${right}`,
+        left: `${left}`,
+        top: `${top}`,
+        bottom: `${bottom}`,
+      }}
+    >
       <div className="confirmBox__title">{message}</div>
       <div className="confirmBox__btn">
         <Button

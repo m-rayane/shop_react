@@ -10,9 +10,10 @@ export const FormField = ({
   style,
   placeholder,
   value,
+  index,
 }) => {
   return (
-    <div className={`${className} field`}>
+    <div className={`${className} field`} index={index}>
       <label htmlFor={name}>{children}</label>
       <input
         type={type}

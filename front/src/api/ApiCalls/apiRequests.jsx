@@ -1,6 +1,7 @@
 import axios from 'axios'
 
 // axios configuration
+// axios.defaults.baseURL = 'http://mrayane.com/api'
 axios.defaults.baseURL = 'http://localhost:4200/api'
 axios.defaults.headers.common['Content-Type'] = 'application/json'
 axios.defaults.withCredentials = true

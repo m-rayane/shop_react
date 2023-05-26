@@ -7,13 +7,19 @@ import { ModifyButtons } from '../../molecules/modifyButtons'
 import { ConfirmButtons } from '../../molecules/confirmButtons'
 
 import { Context } from '../../../utils/Context'
-import { addToCart } from '../../atoms/Services/cartSerivces'
+import { addToCart } from '../../atoms/Services/cartServices'
 
-export const ProductGrid = ({ products, className, category, origin }) => {
+export const ProductGrid = ({
+  products,
+  className,
+  category,
+  showMiniCard,
+  productId,
+  setProductMessage,
+  setProductName,
+  setShowContent,
+}) => {
   const { userData, productsData, getProducts } = useContext(Context)
-  const [targetProduct, setTargetProduct] = useState(false)
-  const [confirmDelete, setConfirmDelete] = useState(false)
-  const [isEditing, setIsEditing] = useState(false)
 
   const navigate = useNavigate()
 
@@ -23,75 +29,38 @@ export const ProductGrid = ({ products, className, category, origin }) => {
   }
 
   const productByCategory = products.filter(
-    (product) => product._category === category
+    (product) => product._category === category && product._id !== productId
   )
 
   return (
     <>
-      <ul className={`${className}`}>
+      <div className={`${className}`}>
         {productByCategory.map((product, index) => {
           const handleAddToCart = () => {
             addToCart(product._id, 1)
           }
 
-          const handleEdit = (id) => {
-            setIsEditing(true)
-            setTargetProduct(id)
+          const handleOut = () => {
+            console.log('Mouse out')
+            setProductMessage('')
+            setProductName('')
+            setShowContent('')
           }
 
-          const handleDelete = (id) => {
-            setConfirmDelete(true)
-            setTargetProduct(id)
-          }
-
-          const handleCancel = (e) => {
-            e.preventDefault()
-            setConfirmDelete(false)
-            navigate(`/boutique`, { replace: true })
-          }
-
-          const handleConfirm = async (e) => {
-            e.preventDefault()
-            try {
-              console.log('produit supprimé')
-              console.log(product._id)
-              // await productServices.deleteProduct(product._id)
-              setConfirmDelete('')
-              getProducts()
-            } catch (error) {
-              console.log(error)
-            }
+          const handleHover = () => {
+            setProductMessage(product._shortDescription)
+            setProductName(product._name)
+            setShowContent('showContent')
           }
 
           return (
-            <>
-              {origin === 'shop' && (
-                <li key={index} className={`${className}__product`}>
-                  {/* {userData.role === 'admin' && (
-                    <div className={`${className}__product__buttons`}>
-                      {!confirmDelete && (
-                        <ModifyButtons
-                          className={`${className}__product__buttons__modifyBtn`}
-                          role={userData.role}
-                          handleDelete={() => {
-                            handleDelete(product._id)
-                          }}
-                          handleEdit={() => {
-                            handleEdit(product._id)
-                          }}
-                        />
-                      )}
-
-                      {confirmDelete && targetProduct === product._id && (
-                        <ConfirmButtons
-                          message="Êtes-vous sûr de vouloir supprimer ?"
-                          className={`${className}__product__buttons__confirmBtn`}
-                          handleCancel={handleCancel}
-                          handleConfirm={handleConfirm}
-                        />
-                      )}
-                    </div>
-                  )} */}
+            <ul key={index}>
+              {!showMiniCard && (
+                <li
+                  className={`${className}__product`}
+                  onMouseOver={handleHover}
+                  onMouseLeave={handleOut}
+                >
                   <Link
                     to={`/boutique/${product._category
                       .replace(/\s+/g, '-')
@@ -102,14 +71,23 @@ export const ProductGrid = ({ products, className, category, origin }) => {
                       className={`${className}__product__productCard`}
                       product={product}
                       handleAddToCart={handleAddToCart}
-                      descLength="200"
+                      descLength="100"
                     />
                   </Link>
                 </li>
               )}
-              {origin === 'home' && (
-                <li key={index} className={`${className}__miniCard`}>
-                  <Link to={`/boutique/${product._id}`} style={linkStyle}>
+              {showMiniCard && (
+                <li
+                  className={`${className}__miniCard`}
+                  onMouseOver={handleHover}
+                  onMouseLeave={handleOut}
+                >
+                  <Link
+                    to={`/boutique/${category
+                      .toLowerCase()
+                      .replace(/\s+/g, '-')}/${product._id}`}
+                    style={linkStyle}
+                  >
                     <ProductMiniCard
                       className={`${className}__miniCard`}
                       product={product}
@@ -117,10 +95,10 @@ export const ProductGrid = ({ products, className, category, origin }) => {
                   </Link>
                 </li>
               )}
-            </>
+            </ul>
           )
         })}
-      </ul>
+      </div>
     </>
   )
 }

@@ -15,6 +15,7 @@ router.put('/users/:id', auth, userCtrl.editUser)
 router.post('/shipping_address/:id', auth, userCtrl.addShippingAddress)
 router.get('/shipping_address', auth, userCtrl.getAllAddress)
 router.get('/shipping_address/:id', auth, userCtrl.getShippingAddress)
+router.put('/shipping_address/:id', auth, userCtrl.editShippingAddress)
 router.delete('/shipping_address/:id', auth, userCtrl.deleteShippingAddress)
 // router.delete('/users/:id', auth, multer, userCtrl.deleteUser);
 

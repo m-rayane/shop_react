@@ -23,7 +23,10 @@ exports.sendEmail = async (req, res) => {
       {
         title: req.body.title,
         text: req.body.text,
-        orderDetails: req.body.orderDetails,
+        customerFirstName: req.body.customerFirstName,
+        customerLastName: req.body.customerLastName,
+        customerEmail: req.body.customerEmail,
+        customerPhoneNumber: req.body.customerPhoneNumber,
       }
     ),
   }

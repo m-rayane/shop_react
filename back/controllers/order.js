@@ -5,17 +5,20 @@ const fs = require('fs')
 const randomNumber = Math.floor(Math.random() * 900) + 100
 
 exports.getAllOrders = (req, res, next) => {
-  dbConnection.query('SELECT * FROM orders', (err, result) => {
-    if (err) return res.status(500).json(err)
-    if (result == 0)
-      return res.status(404).json({ message: 'Orders not found !' })
-    res.status(200).json(result)
-  })
+  dbConnection.query(
+    'SELECT * FROM orders ORDER BY createdDate DESC',
+    (err, result) => {
+      if (err) return res.status(500).json(err)
+      if (result == 0)
+        return res.status(404).json({ message: 'Orders not found !' })
+      res.status(200).json(result)
+    }
+  )
 }
 
 exports.getOrdersByUser = (req, res, next) => {
   dbConnection.query(
-    'SELECT * FROM orders WHERE userId = ?',
+    'SELECT * FROM orders WHERE userId = ? ORDER BY createdDate DESC',
     req.params.id,
     (err, result) => {
       if (err) return res.status(500).json(err)
@@ -24,6 +27,39 @@ exports.getOrdersByUser = (req, res, next) => {
       res.status(200).json(result)
     }
   )
+}
+
+exports.createShippingCosts = (req, res, next) => {
+  const { company, item } = req.body
+  if (!company || !item) {
+    return res
+      .status(400)
+      .json({ message: 'Company, weight, and price are required!' })
+  }
+  const itemValues = item.map((i) => [company, i.weight, i.price])
+  dbConnection.query(
+    'INSERT INTO shipping_costs (company, weight, price) VALUES ?',
+    [itemValues],
+    (err, result) => {
+      if (err) {
+        console.error('Error in createShippingCost:', err)
+        return res.status(500).json({ message: 'Internal Server Error' })
+      }
+      res.status(201).json({
+        id: result.insertId,
+        message: 'Shipping cost created successfully',
+      })
+    }
+  )
+}
+
+exports.getShippingCosts = (req, res, next) => {
+  dbConnection.query('SELECT * FROM shipping_costs', (err, result) => {
+    if (err) return res.status(500).json(err)
+    if (result == 0)
+      return res.status(404).json({ message: 'Orders not found !' })
+    res.status(200).json(result)
+  })
 }
 
 exports.getOrderDetailByUser = (req, res, next) => {
@@ -43,7 +79,6 @@ exports.getOrderDetailByUser = (req, res, next) => {
 }
 
 exports.getOrderDetailByOrder = (req, res, next) => {
-  console.log(req.params)
   dbConnection.query(
     'SELECT * FROM order_details WHERE orderId = ?',
     req.params.id,
@@ -71,11 +106,12 @@ exports.createOrder = (req, res) => {
         return res.status(500).send('Transaction failed to begin')
       }
       const date = new Date(Date.now())
+      const orderIdSuffix = ('000' + Math.floor(Math.random() * 1000)).slice(-3)
+      const orderId = `J${date
+        .toLocaleDateString()
+        .replace(/[^\w\s]/gi, '')}${orderIdSuffix}`
       const order = new Order({
-        id: `J${date
-          .toLocaleString()
-          .replace(/[^\w\s]/gi, '')
-          .replace(/\s+/g, '')}`,
+        id: orderId,
         userId: req.body.userId,
         status: 'en attente de validation',
         totalPrice: req.body.totalPrice,
@@ -92,10 +128,11 @@ exports.createOrder = (req, res) => {
             order.id,
             detail.productId,
             detail.quantity,
+            detail.option,
             detail.price,
           ])
           const query =
-            'INSERT INTO order_details (userId, orderId, productId, quantity, priceUnit) VALUES ?'
+            'INSERT INTO order_details (userId, orderId, productId, quantity, `option`, priceUnit) VALUES ?'
           dbConnection.query(query, [values], (error, results, fields) => {
             if (error) throw error
             console.log('Order details created successfully')

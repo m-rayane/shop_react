@@ -1,6 +1,6 @@
 import '../utils/styles/home.scss'
 
-import React, { useContext, useRef } from 'react'
+import React, { useContext, useState } from 'react'
 import { Link } from 'react-router-dom'
 import useScrollSnap from 'react-use-scroll-snap'
 import ImageGallery from 'react-image-gallery'
@@ -14,9 +14,15 @@ import { Context } from '../utils/Context'
 
 export default function Home() {
   const { productsData } = useContext(Context)
+  const [productMessage, setProductMessage] = useState()
+  const [productName, setProductName] = useState()
+  const [showContent, setShowContent] = useState()
 
-  // const scrollRef = useRef(null)
-  // useScrollSnap({ ref: scrollRef, duration: 1, delay: 1 })
+  // window.scrollTo({
+  //   top: 0,
+  //   left: 0,
+  //   behavior: 'smooth',
+  // })
 
   const linkStyle = {
     color: 'inherit',
@@ -24,10 +30,9 @@ export default function Home() {
   }
 
   return (
-    // <div className="home" ref={scrollRef}>
     <div className="home">
-      <section className="home__section background--dark">
-        <h1 className="home__section__title">TENTE DE TOIT DE VOITURE</h1>
+      <section className="home__section">
+        {/* <h1 className="home__section__title">TENTE DE TOIT DE VOITURE</h1> */}
         <Link to={`/boutique`} style={linkStyle}>
           <button className="home__section__button">
             DECOUVREZ NOS TENTES
@@ -42,6 +47,7 @@ export default function Home() {
             showFullscreenButton={false}
             showPlayButton={false}
             showBullets={true}
+            slideInterval="5000"
           />
         </div>
       </section>
@@ -49,9 +55,16 @@ export default function Home() {
         <ProductGrid
           products={productsData}
           className="home__section__products"
-          category="Tente de toit"
-          origin="home"
+          category="Tentes de toit"
+          showMiniCard={true}
+          setProductMessage={setProductMessage}
+          setProductName={setProductName}
+          setShowContent={setShowContent}
         />
+        <div className={`home__section__content ${showContent}`}>
+          <h3 className="home__section__content__name">{productName}</h3>
+          <h4 className="home__section__content__message">{productMessage}</h4>
+        </div>
       </section>
       <section className="home__section background--dark">
         <h2>Section 3</h2>

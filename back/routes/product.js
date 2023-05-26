@@ -10,7 +10,16 @@ router.post('/products', auth, multer, productCtrl.createProduct)
 router.get('/products/:id', productCtrl.getOneProduct)
 router.put('/products/:id', auth, multer, productCtrl.editProduct)
 router.delete('/products/:id', auth, productCtrl.deleteProduct)
-router.post('/products/:id/options', auth, productCtrl.addOption)
-router.get('/products/:id/options', auth, productCtrl.getOption)
+
+router.post('/options', productCtrl.addOption)
+router.get('/options', productCtrl.getAllOptions)
+router.get('/options/:id', productCtrl.getOptionsByProduct)
+router.put('/options/:id', productCtrl.updateOption)
+router.delete('/options/:id', productCtrl.deleteOption)
+
+router.post('/technicals', productCtrl.addTechnical)
+router.get('/technicals/:id', productCtrl.getTechnicalsByProduct)
+router.put('/technicals/:id', productCtrl.updateTechnical)
+router.delete('/technicals/:id', productCtrl.deleteTechnical)
 
 module.exports = router

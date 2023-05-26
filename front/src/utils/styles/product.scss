@@ -4,6 +4,55 @@
 
 @include product;
 
+.product {
+  &__card {
+    &__similar {
+      width: 96vw;
+      &__content {
+        & h3 {
+          text-align: center;
+        }
+        &__productGrid {
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          gap: 1vw;
+          flex-wrap: nowrap;
+          overflow-x: hidden;
+          overflow-y: hidden;
+          // padding: 1vw;
+          @include miniCard;
+          &__product {
+            width: 31vw;
+          }
+        }
+      }
+    }
+    &__additional {
+      width: 96vw;
+      &__content {
+        & h3 {
+          padding: 1rem 0 0.5rem 0;
+          text-align: center;
+        }
+        &__productGrid {
+          width: 100%;
+          display: flex;
+          justify-content: flex-start;
+          gap: 1vw;
+          flex-wrap: nowrap;
+          overflow-x: scroll;
+          overflow-y: hidden;
+          @include miniCard;
+          &__product {
+            width: 31vw;
+          }
+        }
+      }
+    }
+  }
+}
+
 .container {
   display: flex;
   flex-direction: column;
