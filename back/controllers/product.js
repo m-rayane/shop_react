@@ -16,7 +16,7 @@ exports.getAllProducts = (req, res, next) => {
 // to get one product to display on single product page
 exports.getOneProduct = (req, res, next) => {
   dbConnection.query(
-    'SELECT * FROM products WHERE id ?',
+    'SELECT * FROM products WHERE id = ?',
     req.params.id,
     (err, result) => {
       if (err) return res.status(500).json(err)
